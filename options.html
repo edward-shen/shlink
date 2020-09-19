@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    div {
+      display: flex;
+      align-items: baseline;
+      padding: 5px 0;
+      margin: 0 auto;
+    }
+
+    label {
+      min-width: 100px;
+      text-align: right;
+      padding: 0 10px;
+    }
+
+    input {
+      min-width: 300px;
+    }
+
+    button {
+      margin: 5px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <label for="host">Host URL</label>
+    <input type="text" id="host" placeholder="https://example.com">
+  </div>
+  <div>
+    <label for="key">API Key</label>
+    <input type="text" id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxlength="36">
+  </div>
+  <script src="options.js"></script>
+</body>
+
+</html>
