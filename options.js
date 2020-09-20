@@ -16,10 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const hostKeyEle = document.querySelector("#host");
-const apiKeyEle = document.querySelector("#key");
+const hostKeyEle = document.getElementById("host");
+const apiKeyEle = document.getElementById("key");
 
-function saveOptions() {
+function saveOptions(event) {
+  if (event.type === 'click') {
+    event.preventDefault();
+  }
+
   // Apparently the API key is a UUID
   const apiKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const shlinkHost = hostKeyEle.value;
@@ -78,3 +82,4 @@ hostKeyEle.oninput = saveOptions;
 apiKeyEle.oninput = saveOptions;
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
+document.getElementById('save').addEventListener('click', saveOptions);

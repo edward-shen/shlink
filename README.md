@@ -42,7 +42,6 @@ This extension keeps your API key in plaintext in your local browser storage.
 | [`notifications`][notif-api]      | Needed so that the extension can inform users if generating the short link was successful or not. |
 | [`clipboardWrite`][clipboard-api] | Needed so that the extension can copy the short link to your clipboard. |
 | [`storage`][storage-api]          | Needed so that the extension can save the location of a Shlinker instance and your API key. |
-| [`<all_urls>`][all-urls-api]      | Needed so that the extension can run on every page. |
 
 ## Technical Notes
 
