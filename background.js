@@ -158,12 +158,31 @@ function validateShlinkResponse(httpResp) {
  * success, or an error indicating that we failed to copy to the clipboard.
  */
 function copyLinkToClipboard(shlinkResp) {
-  return navigator.clipboard
-    .writeText(shlinkResp.shortUrl)
-    .then(
-      () => Promise.resolve(shlinkResp),
-      () => Promise.reject(new Error("failed to copy to clipboard"))
-    );
+  // God fucking dammit Chrome. You can't directly write to the clipboard when
+  // as a background extension with the clipboard API (despite even having the
+  // permission), so we instead just do this hacky workaround instead.
+  if (typeof chrome !== "undefined") {
+    const prevSelected = document.activeElement;
+    const tempEle = document.createElement("input");
+    document.body.appendChild(tempEle);
+    tempEle.value = shlinkResp.shortUrl;
+    tempEle.select();
+    document.execCommand(`copy`);
+    document.body.removeChild(tempEle);
+    // Depending on what was previously selected, we might not be able to select
+    // the text.
+    if (prevSelected?.select) {
+      prevSelected.select();
+    }
+    return Promise.resolve(shlinkResp);
+  } else {
+    return navigator.clipboard
+      .writeText(shlinkResp.shortUrl)
+      .then(
+        () => Promise.resolve(shlinkResp),
+        () => Promise.reject(new Error(`Failed to copy to clipboard. ${e}`))
+      );
+  }
 }
 
 /**
@@ -176,6 +195,7 @@ function notifySuccess(result) {
   browser.notifications.create({
     type: "basic",
     title: "Shlink copied!",
+    iconUrl: "icons/shlink-64.png",
     message: `${result.shortUrl} was copied to your clipboard.`,
   });
 }
@@ -190,6 +210,7 @@ function notifyError(error) {
   browser.notifications.create({
     type: "basic",
     title: "Failed to create Shlink",
+    iconUrl: "icons/shlink-64.png",
     message: error.message,
   });
 }
