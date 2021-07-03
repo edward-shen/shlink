@@ -16,22 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Element lookups
 const hostKeyEle = document.getElementById("host");
 const apiKeyEle = document.getElementById("key");
+const clickBehaviorEle = document.getElementById("click-behavior");
+const createOptionsEle = document.getElementById("create-options");
+const createOptionsFindIfExistsEle = document.getElementById("create-findIfExists");
+const modifyOptionsEle = document.getElementById("modify-options");
+const modifyOptionsShortUrlEle = document.getElementById("modify-shortUrl");
 
-function saveOptions(event) {
-  if (event.type === 'click') {
+// Global shorthands
+const browserStorage = browser.storage.local;
+
+// Event listeners
+
+hostKeyEle.oninput = (event) => {
+  if (event.type === "click") {
     event.preventDefault();
   }
 
-  // Apparently the API key is a UUID
-  const apiKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const shlinkHost = hostKeyEle.value;
-  const shlinkApiKey = apiKeyEle.value;
 
-  let invalidInput = false;
-
-  // Check if URL is valid
   // Need to use a try/catch here because URL constructor may throw an exception
   try {
     const url = new URL(shlinkHost);
@@ -41,37 +46,110 @@ function saveOptions(event) {
       throw new Error("Invalid protocol");
     }
 
-    browser.storage.local.set({ shlinkHost });
-    hostKeyEle.style.color = "#000";
+    browserStorage.set({ shlinkHost });
+    hostKeyEle.classList.remove("invalid-value");
   } catch (_) {
-    hostKeyEle.style.color = "#f00";
+    hostKeyEle.classList.add("invalid-value");
   }
 
+};
 
-  // Check if API key is valid.
+apiKeyEle.oninput = (event) => {
+  if (event.type === "click") {
+    event.preventDefault();
+  }
+
+  // Apparently the API key is a UUID
+  const apiKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const shlinkApiKey = apiKeyEle.value;
+
   if (apiKeyRegex.test(shlinkApiKey)) {
-    browser.storage.local.set({ shlinkApiKey });
-    apiKeyEle.style.color = "#000";
+    browserStorage.set({ shlinkApiKey });
+    apiKeyElehostKeyEle.classList.remove("invalid-value");
   } else {
-    apiKeyEle.style.color = "#f00";
+    apiKeyEle.classList.add("invalid-value");
+  }
+};
+
+createOptionsFindIfExistsEle.onclick = () => {
+  browserStorage.get("createOptions").then(({ createOptions }) => {
+    createOptions.findIfExists = createOptionsFindIfExistsEle.checked;
+    browserStorage.set({ createOptions });
+  });
+};
+
+clickBehaviorEle.onchange = () => {
+  switch (clickBehaviorEle.value) {
+    case "create":
+      modifyOptionsEle.classList.add("hidden");
+      createOptionsEle.classList.remove("hidden");
+      browserStorage.set({ "shlinkButtonOption": clickBehaviorEle.value });
+      break;
+    case "modify":
+      modifyOptionsEle.classList.remove("hidden");
+      createOptionsEle.classList.add("hidden");
+      browserStorage.set({ "shlinkButtonOption": clickBehaviorEle.value });
+      break;
+    default:
+      console.error(`Got unknown click behavior: ${clickBehaviorEle.value}`);
   }
 }
 
-function restoreOptions() {
-  function setCurrentChoice(result) {
-    hostKeyEle.value = result.shlinkHost || "";
-    apiKeyEle.value = result.shlinkApiKey || "";
+modifyOptionsShortUrlEle.oninput = (event) => {
+  if (event.type === "click") {
+    event.preventDefault();
   }
 
-  function onError(error) {
-    console.log(`Error: ${error}`);
+  if (modifyOptionsShortUrlEle.value.length < 4) {
+    modifyOptionsShortUrlEle.classList.add("invalid-value");
+    return;
+  } else {
+    modifyOptionsShortUrlEle.classList.remove("invalid-value");
   }
 
-  browser.storage.local.get(["shlinkHost", "shlinkApiKey"]).then(setCurrentChoice, onError);
+  browserStorage.get("modifyOptions").then(({ modifyOptions }) => {
+    modifyOptions.shortUrl = modifyOptionsShortUrlEle.value;
+    browserStorage.set({ modifyOptions });
+  })
 }
 
-hostKeyEle.oninput = saveOptions;
-apiKeyEle.oninput = saveOptions;
+function setCurrentChoice({ shlinkHost, shlinkApiKey, shlinkButtonOption, createOptions, modifyOptions }) {
+  hostKeyEle.value = shlinkHost || "";
+  apiKeyEle.value = shlinkApiKey || "";
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById('save').addEventListener('click', saveOptions);
+  // If option doesn't exist, set default options
+  // This should also handle migrating from 0.3.0 to 0.4.0
+  if (!shlinkButtonOption) {
+    const defaultConfig = {
+      "shlinkButtonOption": "create",
+      "createOptions": {
+        "findIfExists": true,
+      },
+      "modifyOptions": {
+        "shortUrl": "",
+      }
+    };
+    browserStorage.set(defaultConfig);
+    ({ shlinkButtonOption, createOptions } = defaultConfig);
+  }
+
+  createOptionsFindIfExistsEle.checked = !!createOptions.findIfExists;
+  modifyOptionsShortUrlEle.value = modifyOptions.shortUrl;
+
+  switch (shlinkButtonOption) {
+    case "create":
+      createOptionsEle.classList.remove("hidden");
+      clickBehaviorEle.value = shlinkButtonOption;
+      break;
+    case "modify":
+      modifyOptionsEle.classList.remove("hidden");
+      clickBehaviorEle.value = shlinkButtonOption;
+      break;
+    default:
+      break;
+  }
+}
+
+browserStorage.get().then(setCurrentChoice, (error) => {
+  console.log(`Error: ${error}`);
+});

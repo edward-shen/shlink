@@ -79,7 +79,7 @@ function validateURL(url) {
  * missing.
  */
 function generateShlinkRequest(url) {
-  return browser.storage.local.get(["shlinkHost", "shlinkApiKey"]).then((data) => {
+  return browser.storage.local.get().then((data) => {
     if (!data.shlinkApiKey) {
       return Promise.reject(new Error(
         "Missing API key. Please configure the Shlink extension!"
@@ -106,19 +106,33 @@ function requestShlink(shlinkRequest) {
   headers.append("Content-Type", "application/json");
   headers.append("X-Api-Key", shlinkRequest.shlinkApiKey);
 
-  const request = new Request(
-    `${shlinkRequest.shlinkHost}/rest/v2/short-urls`,
-    {
-      method: 'post',
-      headers,
-      body: JSON.stringify({
-        longUrl: shlinkRequest.longUrl,
-        findIfExists: true,
-      }),
-    },
-  );
+  console.log(shlinkRequest);
 
-  return fetch(request);
+  if (shlinkRequest.shlinkButtonOption === "create") {
+    return fetch(new Request(
+      `${shlinkRequest.shlinkHost}/rest/v2/short-urls`,
+      {
+        method: 'post',
+        headers,
+        body: JSON.stringify({
+          longUrl: shlinkRequest.longUrl,
+          findIfExists: shlinkRequest.createOptions.findIfExists,
+        }),
+      },
+    ));
+  } else {
+    console.log(`${shlinkRequest.shlinkHost}/rest/v2/short-urls/${shlinkRequest.modifyOptions.shortUrl}`);
+    return fetch(new Request(
+      `${shlinkRequest.shlinkHost}/rest/v2/short-urls/${shlinkRequest.modifyOptions.shortUrl}`,
+      {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({
+          longUrl: shlinkRequest.longUrl
+        })
+      }
+    ));
+  }
 }
 
 /**

@@ -8,39 +8,72 @@
     body {
       display: flex;
       flex-direction: column;
+      padding: 5px;
+      height: 300px;
     }
 
     div {
       display: flex;
       align-items: baseline;
-      padding: 5px 0;
-      margin: 0 auto;
     }
 
     label {
-      min-width: 100px;
       text-align: right;
       padding: 0 10px;
+      width: 600px;
+      align-items: baseline;
+      padding: 5px 0;
     }
 
-    input {
+    input,
+    .click-behavior select {
+      margin-left: 10px;
       min-width: 300px;
+      min-height: 17px;
     }
 
-    button {
-      margin: 5px auto;
+    .hidden {
+      display: none;
+    }
+
+    .invalid-value {
+      color: red;
     }
   </style>
 </head>
 
 <body>
-  <div>
-    <label for="host">Host URL</label>
+  <h3>Global settings</h3>
+  <label>
+    Host URL
     <input type="text" id="host" placeholder="https://example.com">
-  </div>
-  <div>
-    <label for="key">API Key</label>
+  </label>
+  <label>
+    API Key
     <input type="text" id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxlength="36">
+  </label>
+
+  <h3>Button behavior</h3>
+  <label class="click-behavior">
+    On click,
+    <select id="click-behavior">
+      <option value="create">Create a Shlink</option>
+      <option value="modify">Modify a Shlink</option>
+    </select>
+  </label>
+
+  <div id="create-options" class="hidden">
+    <label>
+      Use existing Shlink if exists
+      <input type="checkbox" id="create-findIfExists">
+    </label>
+  </div>
+
+  <div id="modify-options" class="hidden">
+    <label>
+      Short url to modify
+      <input type="text" id="modify-shortUrl">
+    </label>
   </div>
 
   <script src="lib/browser-polyfill.min.js"></script>
