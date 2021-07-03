@@ -55,10 +55,6 @@ This extension keeps your API key in plaintext in your local browser storage.
 | [`clipboardWrite`][clipboard-api] | Needed so that the extension can copy the short link to your clipboard.                           |
 | [`storage`][storage-api]          | Needed so that the extension can save the location of a Shlinker instance and your API key.       |
 
-## Technical Notes
-
-This extension will always send a `findIfExists` request alongside the `longUrl`, so requesting multiple links from the same page will return an identical link.
-
 [home-page]: https://shlink.io
 [getting-started]: https://shlink.io/documentation
 [api-key-docs]: https://shlink.io/documentation/api-docs/authentication/
