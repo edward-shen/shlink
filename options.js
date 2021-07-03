@@ -32,37 +32,29 @@ function saveOptions(event) {
   let invalidInput = false;
 
   // Check if URL is valid
+  // Need to use a try/catch here because URL constructor may throw an exception
   try {
     const url = new URL(shlinkHost);
-    console.log(url.protocol);
-    console.log(url);
+
+    // We already throw an exception earlier, might as well throw an error here.
     if (url.protocol !== "http:" && url.protocol !== "https:") {
       throw new Error("Invalid protocol");
     }
+
+    browser.storage.local.set({ shlinkHost });
+    hostKeyEle.style.color = "#000";
   } catch (_) {
-    invalidInput = true;
     hostKeyEle.style.color = "#f00";
   }
 
 
   // Check if API key is valid.
-  if (!apiKeyRegex.test(shlinkApiKey)) {
-    invalidInput = true;
+  if (apiKeyRegex.test(shlinkApiKey)) {
+    browser.storage.local.set({ shlinkApiKey });
+    apiKeyEle.style.color = "#000";
+  } else {
     apiKeyEle.style.color = "#f00";
   }
-
-  if (invalidInput) {
-    return;
-  }
-
-  // If we got here than everything is valid
-  hostKeyEle.style.color = "#000";
-  apiKeyEle.style.color = "#000";
-
-  browser.storage.local.set({
-    shlinkHost,
-    shlinkApiKey,
-  });
 }
 
 function restoreOptions() {
