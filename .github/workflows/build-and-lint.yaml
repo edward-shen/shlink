@@ -1,0 +1,22 @@
+name: "Build and lint"
+on: push
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    name: "Build and Lint"
+    strategy:
+      matrix:
+        command: ["build", "lint"]
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v1
+
+      - name: "web-ext ${{ matrix.command }}"
+        uses: kewisch/action-web-ext@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          cmd: ${{ matrix.command }}
+          source: .
+          channel: listed
