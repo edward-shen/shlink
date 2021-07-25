@@ -22,6 +22,7 @@ const apiKeyEle = document.getElementById("key");
 const clickBehaviorEle = document.getElementById("click-behavior");
 const createOptionsEle = document.getElementById("create-options");
 const createOptionsFindIfExistsEle = document.getElementById("create-findIfExists");
+const createOptionsTagShortUrlEle = document.getElementById("create-tagShortUrl");
 const modifyOptionsEle = document.getElementById("modify-options");
 const modifyOptionsShortUrlEle = document.getElementById("modify-shortUrl");
 
@@ -74,6 +75,13 @@ apiKeyEle.oninput = (event) => {
 createOptionsFindIfExistsEle.onclick = () => {
   browserStorage.get("createOptions").then(({ createOptions }) => {
     createOptions.findIfExists = createOptionsFindIfExistsEle.checked;
+    browserStorage.set({ createOptions });
+  });
+};
+
+createOptionsTagShortUrlEle.onclick = () => {
+  browserStorage.get("createOptions").then(({ createOptions }) => {
+    createOptions.tagShortUrl = createOptionsTagShortUrlEle.checked;
     browserStorage.set({ createOptions });
   });
 };
@@ -134,6 +142,7 @@ function setCurrentChoice({ shlinkHost, shlinkApiKey, shlinkButtonOption, create
   }
 
   createOptionsFindIfExistsEle.checked = !!createOptions.findIfExists;
+  createOptionsTagShortUrlEle.checked = !!createOptions.tagShortUrl;
   modifyOptionsShortUrlEle.value = modifyOptions.shortUrl;
 
   switch (shlinkButtonOption) {

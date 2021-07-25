@@ -39,6 +39,11 @@
     .invalid-value {
       color: red;
     }
+
+    main {
+      display: flex;
+      flex-direction: column;
+    }
   </style>
 </head>
 
@@ -62,19 +67,23 @@
     </select>
   </label>
 
-  <div id="create-options" class="hidden">
+  <main id="create-options" class="hidden">
     <label>
       Use existing Shlink if exists
       <input type="checkbox" id="create-findIfExists">
     </label>
-  </div>
+    <label>
+      Tag Shlinks created with this extension
+      <input type="checkbox" id="create-tagShortUrl">
+    </label>
+  </main>
 
-  <div id="modify-options" class="hidden">
+  <main id="modify-options" class="hidden">
     <label>
       Short url to modify
       <input type="text" id="modify-shortUrl">
     </label>
-  </div>
+  </main>
 
   <script src="lib/browser-polyfill.min.js"></script>
   <script src="options.js"></script>

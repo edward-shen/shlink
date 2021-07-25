@@ -109,15 +109,24 @@ function requestShlink(shlinkRequest) {
   console.log(shlinkRequest);
 
   if (shlinkRequest.shlinkButtonOption === "create") {
+    const options = {
+      longUrl: shlinkRequest.longUrl,
+    };
+
+    if (shlinkRequest.createOptions.findIfExists) {
+      options.findIfExists = true;
+    }
+
+    if (shlinkRequest.createOptions.tagShortUrl) {
+      options.tags = ["shlink-extension"];
+    }
+
     return fetch(new Request(
       `${shlinkRequest.shlinkHost}/rest/v2/short-urls`,
       {
         method: 'post',
         headers,
-        body: JSON.stringify({
-          longUrl: shlinkRequest.longUrl,
-          findIfExists: shlinkRequest.createOptions.findIfExists,
-        }),
+        body: JSON.stringify(options),
       },
     ));
   } else {
