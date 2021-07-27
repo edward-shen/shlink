@@ -203,7 +203,7 @@ function copyLinkToClipboard(shlinkResp) {
       .writeText(shlinkResp.shortUrl)
       .then(
         () => Promise.resolve(shlinkResp),
-        () => Promise.reject(new Error(`Failed to copy to clipboard. ${e}`))
+        (e) => Promise.reject(new Error(`Failed to copy to clipboard. ${e.message}`))
       );
   }
 }
