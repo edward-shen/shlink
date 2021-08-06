@@ -16,20 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Global config options
-
 /**
  * The list of allowed protocols. This extension will refuse to generate a link
  * if the URL does not contain one of these protocols.
  *
  * If this list is empty, then all protocols are allowed.
  */
-const ALLOWED_PROTOCOLS = [
-  "https:",
-  "http:",
-  "ftp:",
-  "file:",
-];
 
 // Type definitions
 
@@ -63,10 +55,24 @@ const ALLOWED_PROTOCOLS = [
  * else an error describing why it was unsupported.
  */
 function validateURL(url) {
-  if (ALLOWED_PROTOCOLS != [] && !ALLOWED_PROTOCOLS.includes(url.protocol)) {
-    return Promise.reject(new Error(`The current page's protocol (${url.protocol}) is unsupported.`));
-  }
-  return Promise.resolve(url);
+  return browser.storage.local.get("allowedProtocols").then(({ allowedProtocols }) => {
+    // Initialize a list of protocols that are allowed if unset.
+    if (allowedProtocols === undefined) {
+      allowedProtocols = [
+        "https:",
+        "http:",
+        "ftp:",
+        "file:",
+      ];
+      browser.storage.local.set({ allowedProtocols });
+    }
+
+    if (allowedProtocols != [] && !allowedProtocols.includes(url.protocol)) {
+      return Promise.reject(new Error(`The current page's protocol (${url.protocol}) is unsupported.`));
+    }
+
+    return Promise.resolve(url);
+  });
 }
 
 /**
