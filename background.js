@@ -124,7 +124,7 @@ function requestShlink(shlinkRequest) {
     return fetch(new Request(
       `${shlinkRequest.shlinkHost}/rest/v2/short-urls`,
       {
-        method: 'post',
+        method: 'POST',
         headers,
         body: JSON.stringify(options),
       },
