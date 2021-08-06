@@ -106,8 +106,6 @@ function requestShlink(shlinkRequest) {
   headers.append("Content-Type", "application/json");
   headers.append("X-Api-Key", shlinkRequest.shlinkApiKey);
 
-  console.log(shlinkRequest);
-
   if (shlinkRequest.shlinkButtonOption === "create") {
     const options = {
       longUrl: shlinkRequest.longUrl,
@@ -130,7 +128,6 @@ function requestShlink(shlinkRequest) {
       },
     ));
   } else {
-    console.log(`${shlinkRequest.shlinkHost}/rest/v2/short-urls/${shlinkRequest.modifyOptions.shortUrl}`);
     return fetch(new Request(
       `${shlinkRequest.shlinkHost}/rest/v2/short-urls/${shlinkRequest.modifyOptions.shortUrl}`,
       {
