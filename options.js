@@ -66,7 +66,7 @@ apiKeyEle.oninput = (event) => {
 
   if (apiKeyRegex.test(shlinkApiKey)) {
     browserStorage.set({ shlinkApiKey });
-    apiKeyElehostKeyEle.classList.remove("invalid-value");
+    apiKeyEle.classList.remove("invalid-value");
   } else {
     apiKeyEle.classList.add("invalid-value");
   }
