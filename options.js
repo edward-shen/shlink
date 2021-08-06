@@ -16,9 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+"use strict";
+
 // Element lookups
 const hostKeyEle = document.getElementById("host");
 const apiKeyEle = document.getElementById("key");
+const AllowHttpEle = document.getElementById("allow-http");
+const AllowHttpsEle = document.getElementById("allow-https");
+const AllowFileEle = document.getElementById("allow-file");
+const AllowFtpEle = document.getElementById("allow-ftp");
 const clickBehaviorEle = document.getElementById("click-behavior");
 const createOptionsEle = document.getElementById("create-options");
 const createOptionsFindIfExistsEle = document.getElementById("create-findIfExists");
@@ -86,6 +92,26 @@ createOptionsTagShortUrlEle.onclick = () => {
   });
 };
 
+const allowProtocolsMapping = [
+  [AllowHttpEle, "http:"],
+  [AllowHttpsEle, "https:"],
+  [AllowFileEle, "file:"],
+  [AllowFtpEle, "ftp:"],
+];
+
+for (const [ele, protocol] of allowProtocolsMapping) {
+  ele.onclick = () => {
+    browserStorage.get("allowedProtocols").then(({ allowedProtocols }) => {
+      if (ele.checked) {
+        allowedProtocols.add(protocol);
+      } else {
+        allowedProtocols.delete(protocol);
+      }
+      browserStorage.set({ allowedProtocols });
+    });
+  };
+}
+
 clickBehaviorEle.onchange = () => {
   switch (clickBehaviorEle.value) {
     case "create":
@@ -121,7 +147,7 @@ modifyOptionsShortUrlEle.oninput = (event) => {
   })
 }
 
-function setCurrentChoice({ shlinkHost, shlinkApiKey, shlinkButtonOption, createOptions, modifyOptions }) {
+function setCurrentChoice({ shlinkHost, shlinkApiKey, allowedProtocols, shlinkButtonOption, createOptions, modifyOptions }) {
   hostKeyEle.value = shlinkHost || "";
   apiKeyEle.value = shlinkApiKey || "";
 
@@ -141,9 +167,28 @@ function setCurrentChoice({ shlinkHost, shlinkApiKey, shlinkButtonOption, create
     ({ shlinkButtonOption, createOptions } = defaultConfig);
   }
 
+  // Initialize a list of protocols that are allowed if unset. This needs
+  // to be synced with the initialization code in background.js#validateURL.
+  if (allowedProtocols === undefined) {
+    allowedProtocols = new Set();
+    allowedProtocols.add("http:");
+    allowedProtocols.add("https:");
+    allowedProtocols.add("ftp:");
+    allowedProtocols.add("file:");
+    browser.storage.local.set({ allowedProtocols });
+  }
+
+  AllowHttpEle.checked = allowedProtocols.has("http:");
+  AllowHttpsEle.checked = allowedProtocols.has("https:");
+  AllowFileEle.checked = allowedProtocols.has("file:");
+  AllowFtpEle.checked = allowedProtocols.has("ftp:");
+
+
   createOptionsFindIfExistsEle.checked = !!createOptions.findIfExists;
   createOptionsTagShortUrlEle.checked = !!createOptions.tagShortUrl;
-  modifyOptionsShortUrlEle.value = modifyOptions.shortUrl;
+  if (modifyOptions) {
+    modifyOptionsShortUrlEle.value = modifyOptions.shortUrl;
+  }
 
   switch (shlinkButtonOption) {
     case "create":

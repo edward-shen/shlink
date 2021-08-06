@@ -49,6 +49,7 @@
 
 <body>
   <h3>Global settings</h3>
+
   <label>
     Host URL
     <input type="text" id="host" placeholder="https://example.com">
@@ -57,6 +58,25 @@
     API Key
     <input type="text" id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxlength="36">
   </label>
+
+  <h4>Protocol filters</h4>
+  <label>
+    Allow <code>http://</code> links
+    <input type="checkbox" id="allow-http">
+  </label>
+  <label>
+    Allow <code>https://</code> links
+    <input type="checkbox" id="allow-https">
+  </label>
+  <label>
+    Allow <code>file://</code> links
+    <input type="checkbox" id="allow-file">
+  </label>
+  <label>
+    Allow <code>ftp://</code> links
+    <input type="checkbox" id="allow-ftp">
+  </label>
+  <p>Disabling all filters will allow a Shlink to be created or modified from any URL.</p>
 
   <h3>Button behavior</h3>
   <label class="click-behavior">
