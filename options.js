@@ -49,8 +49,8 @@ hostKeyEle.oninput = (event) => {
     const url = new URL(shlinkHost);
 
     // We already throw an exception earlier, might as well throw an error here.
-    if (url.protocol !== "http:" && url.protocol !== "https:") {
-      throw new Error("Invalid protocol");
+    if (url.protocol !== "https:") {
+      throw new Error("Only HTTPS communications are allowed.");
     }
 
     browserStorage.set({ shlinkHost });
