@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Shlink",
   "version": "0.5.0",
   "description": "Unofficial Shlink extension",
@@ -20,7 +20,7 @@
   "options_ui": {
     "page": "options.html"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "icons/shlink-16.png",
       "48": "icons/shlink-48.png",
@@ -32,9 +32,11 @@
     "default_title": "Link it!"
   },
   "background": {
-    "scripts": [
-      "lib/browser-polyfill.min.js",
-      "background.js"
-    ]
+    "service_worker": "background.js"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{83ffd475-2a37-44aa-8a1e-658bbcd746cb}"
+    }
   }
 }

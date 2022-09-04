@@ -257,4 +257,4 @@ function generateShlink() {
     .catch(notifyError);
 }
 
-browser.browserAction.onClicked.addListener(generateShlink);
+browser.action.onClicked.addListener(generateShlink);
