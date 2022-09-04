@@ -1,0 +1,4 @@
+as of writing this (2022-09-04) firefox still doesn't support service workers
+yet so we can't migrate completely. background.scripts in manifest.json will
+need to move towards background.service_worker.
+
