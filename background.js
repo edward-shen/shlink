@@ -27,6 +27,7 @@
  * instance with.
  * @property {string} shlinkHost The location of the Shlink instance.
  * @property {string} longUrl The requested URL to shorten.
+ * @property {string} title The title of the content (from the tab).
  */
 
 /**
@@ -46,10 +47,11 @@
  * only permitting a domain to be shortened.
  *
  * @param {!URL} url A URL object that holds the requested URL to shorten.
- * @returns {!Promise<URL, Error>} An unmodified URL if it was a valid link,
+ * @param {!string} title Title of the page being shortened.
+ * @returns {!Promise<[URL, string], Error>} An unmodified URL and title if it was a valid link,
  * else an error describing why it was unsupported.
  */
-function validateURL(url) {
+function validateURL(url, title) {
   return browser.storage.local.get("allowedProtocols").then(({ allowedProtocols }) => {
     // Initialize a list of protocols that are allowed if unset. This needs
     // to be synced with the initialization code in options.js.
@@ -66,7 +68,7 @@ function validateURL(url) {
       return Promise.reject(new Error(`The current page's protocol (${url.protocol}) is unsupported.`));
     }
 
-    return Promise.resolve(url);
+    return Promise.resolve([url, title]);
   });
 }
 
@@ -74,12 +76,13 @@ function validateURL(url) {
  * Fetches locally saved data and parse the URL object to generate an object
  * used to later send a Shlink request.
  *
- * @param {!URL} url A URL object that holds the requested URL to shorten.
+ * @param {[!URL, string]} url A URL object that holds the requested URL to shorten.
+ *                          title The title of the content. 
  * @returns {!Promise<ShlinkRequest, Error>} A ShlinkRequest if we were able to
  * get all the data necessary to send a request, else an error explaining what's
  * missing.
  */
-function generateShlinkRequest(url) {
+function generateShlinkRequest([url, title]) {
   return browser.storage.local.get().then((data) => {
     if (!data.shlinkApiKey) {
       return Promise.reject(new Error(
@@ -90,6 +93,7 @@ function generateShlinkRequest(url) {
       return Promise.reject(new Error("Please configure Shlink!"));
     }
     data.longUrl = url.href;
+    data.title = title;
     return Promise.resolve(data);
   });
 }
@@ -110,6 +114,7 @@ function requestShlink(shlinkRequest) {
   if (shlinkRequest.shlinkButtonOption === "create") {
     const options = {
       longUrl: shlinkRequest.longUrl,
+      title: shlinkRequest.title,
     };
 
     if (shlinkRequest.createOptions.findIfExists) {
@@ -135,7 +140,8 @@ function requestShlink(shlinkRequest) {
         method: 'PATCH',
         headers,
         body: JSON.stringify({
-          longUrl: shlinkRequest.longUrl
+          longUrl: shlinkRequest.longUrl,
+          title: shlinkRequest.title,
         })
       }
     ));
@@ -242,7 +248,7 @@ function notifyError(error) {
 function generateShlink() {
   browser.tabs
     .query({ active: true, currentWindow: true })
-    .then(tabData => validateURL(new URL(tabData[0].url)))
+    .then(tabData => validateURL(new URL(tabData[0].url), tabData[0].title))
     .then(generateShlinkRequest)
     .then(requestShlink)
     .then(validateShlinkResponse)
