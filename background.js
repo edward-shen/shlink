@@ -61,7 +61,9 @@ function validateURL(url, title) {
       allowedProtocols.add("https:");
       allowedProtocols.add("ftp:");
       allowedProtocols.add("file:");
-      browser.storage.local.set({ allowedProtocols });
+      browser.storage.local.set({ allowedProtocols: Array(...allowedProtocols) });
+    } else {
+      allowedProtocols = Set(allowedProtocols);
     }
 
     if (allowedProtocols.size > 0 && !allowedProtocols.has(url.protocol)) {
@@ -77,7 +79,7 @@ function validateURL(url, title) {
  * used to later send a Shlink request.
  *
  * @param {[!URL, string]} url A URL object that holds the requested URL to shorten.
- *                          title The title of the content. 
+ *                          title The title of the content.
  * @returns {!Promise<ShlinkRequest, Error>} A ShlinkRequest if we were able to
  * get all the data necessary to send a request, else an error explaining what's
  * missing.

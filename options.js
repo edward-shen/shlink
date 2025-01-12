@@ -102,12 +102,13 @@ const allowProtocolsMapping = [
 for (const [ele, protocol] of allowProtocolsMapping) {
   ele.onclick = () => {
     browserStorage.get("allowedProtocols").then(({ allowedProtocols }) => {
+      allowedProtocols = new Set(allowedProtocols);
       if (ele.checked) {
         allowedProtocols.add(protocol);
       } else {
         allowedProtocols.delete(protocol);
       }
-      browserStorage.set({ allowedProtocols });
+      browserStorage.set({ allowedProtocols: Array(...allowedProtocols) });
     });
   };
 }
@@ -161,23 +162,16 @@ function setCurrentChoice({ shlinkHost, shlinkApiKey, allowedProtocols, shlinkBu
       },
       "modifyOptions": {
         "shortUrl": "",
-      }
+      },
+      "allowedProtocols": allowProtocolsMapping.flatMap(([_, protocol]) => protocol),
     };
     browserStorage.set(defaultConfig);
-    ({ shlinkButtonOption, createOptions } = defaultConfig);
+    ({ shlinkButtonOption, createOptions, allowedProtocols } = defaultConfig);
   }
 
   // Initialize a list of protocols that are allowed if unset. This needs
   // to be synced with the initialization code in background.js#validateURL.
-  if (allowedProtocols === undefined) {
-    allowedProtocols = new Set();
-    allowedProtocols.add("http:");
-    allowedProtocols.add("https:");
-    allowedProtocols.add("ftp:");
-    allowedProtocols.add("file:");
-    browser.storage.local.set({ allowedProtocols });
-  }
-
+  allowedProtocols = new Set(allowedProtocols);
   AllowHttpEle.checked = allowedProtocols.has("http:");
   AllowHttpsEle.checked = allowedProtocols.has("https:");
   AllowFileEle.checked = allowedProtocols.has("file:");
