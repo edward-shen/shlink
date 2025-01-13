@@ -63,7 +63,7 @@ function validateURL(url, title) {
       allowedProtocols.add("file:");
       browser.storage.local.set({ allowedProtocols: Array(...allowedProtocols) });
     } else {
-      allowedProtocols = Set(allowedProtocols);
+      allowedProtocols = new Set(allowedProtocols);
     }
 
     if (allowedProtocols.size > 0 && !allowedProtocols.has(url.protocol)) {
