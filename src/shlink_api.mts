@@ -37,7 +37,7 @@ class ShlinkRestClient {
   createShortUrl(options: ShlinkCreateShortUrlData): Promise<ShlinkShortUrl> {
     console.debug("Creating new url");
     return fetch(new Request(
-      `${this.#hostname}/rest/v2/short-urls`,
+      `${this.#hostname}/rest/v3/short-urls`,
       {
         method: 'POST',
         headers: this.#headers,
@@ -49,7 +49,7 @@ class ShlinkRestClient {
   updateShortUrl(shortUrl: string, options: ShlinkEditShortUrlData): Promise<ShlinkShortUrl> {
     console.debug("Patching existing url");
     return fetch(new Request(
-      `${this.#hostname}/rest/v2/short-urls/${shortUrl}`,
+      `${this.#hostname}/rest/v3/short-urls/${shortUrl}`,
       {
         method: 'PATCH',
         headers: this.#headers,
