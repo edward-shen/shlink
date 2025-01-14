@@ -1,0 +1,14 @@
+name: build
+description: "Builds via bun"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install bun
+      uses: oven-sh/setup-bun@v2
+    - name: Install dependencies
+      run: bun install
+      shell: bash
+    - name: Build extension
+      run: bun run build
+      shell: bash

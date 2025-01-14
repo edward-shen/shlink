@@ -9,26 +9,26 @@ jobs:
       matrix:
         command: ["build", "lint"]
     steps:
-      - name: "Checkout"
-        uses: actions/checkout@v1
-
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build extension
+        uses: ./.github/actions/build
       - name: "web-ext ${{ matrix.command }}"
-        uses: kewisch/action-web-ext@v1
+        uses: kewisch/action-web-ext@v1.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           cmd: ${{ matrix.command }}
-          source: .
+          source: "./dist"
           channel: listed
   bun-tests:
-    name: "Bun tests"
+    name: Bun tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install dependencies # (assuming your project has dependencies)
-        run: bun install # You can use npm/yarn/pnpm instead if you prefer
-      - name: Run tests
+      - name: Build extension
+        uses: ./.github/actions/build
+      - name: Run bun tests
         run: bun test
+        shell: bash
