@@ -14,9 +14,9 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "start:bundle": "bun run bundle.mts",
-    "start:web-ext": "web-ext run",
-    "watch": "bun run concurrently --kill-others --success last --passthrough-arguments --names bun,web-ext 'bun run start:bundle' 'bun run start:web-ext {@}' --",
+    "build": "bun run bundle.mts",
+    "run:web-ext": "web-ext run",
+    "watch": "bun run concurrently --kill-others --success last --passthrough-arguments --names bun,web-ext 'bun run build' 'bun run run:web-ext {@}' --",
     "clean": "rm -rf dist",
     "purge": "bun run clean; rm -rf node_modules"
   }
