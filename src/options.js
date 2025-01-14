@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+var browser = require("webextension-polyfill");
+
 "use strict";
 
 // Element lookups

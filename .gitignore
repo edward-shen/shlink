@@ -1,2 +1,4 @@
-web-ext-artifacts/**/*
-submission-items/**/*
+web-ext-artifacts/
+submission-items/
+node_modules/
+dist/

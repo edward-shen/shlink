@@ -1,0 +1,23 @@
+{
+  "name": "shlink",
+  "module": "bundle.mts",
+  "type": "module",
+  "dependencies": {
+    "@shlinkio/shlink-js-sdk": "^1.3.0",
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/webextension-polyfill": "^0.12.1",
+    "concurrently": "^9.1.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "start:bundle": "bun run bundle.mts",
+    "start:web-ext": "web-ext run",
+    "watch": "bun run concurrently --kill-others --success last --passthrough-arguments --names bun,web-ext 'bun run start:bundle' 'bun run start:web-ext {@}' --",
+    "clean": "rm -rf dist",
+    "purge": "bun run clean; rm -rf node_modules"
+  }
+}

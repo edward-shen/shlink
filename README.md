@@ -11,15 +11,15 @@ This extension provides a shortcut button to generate a short url using
 
 ## Usage
 
-Click the extension and a short link will be requested from your instance
-for the page you're currently on. This short link will be copied to your
-clipboard, so you can easily paste it.
+Click the extension and a short link will be requested from your instance for
+the page you're currently on. This short link will be copied to your clipboard,
+so you can easily paste it.
 
 ## Requirements
 
-An existing Shlink installation that's ready to use. If you don't have one,
-take a look at their [Getting Started page][getting-started] to learn how to
-run your own instance.
+An existing Shlink installation that's ready to use. If you don't have one, take
+a look at their [Getting Started page][getting-started] to learn how to run your
+own instance.
 
 ## Installation
 
@@ -63,3 +63,47 @@ This extension keeps your API key in plaintext in your local browser storage.
 [clipboard-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/clipboard
 [storage-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage
 [all-urls-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns
+
+## Developing
+
+### Pre-requsities
+
+- `bun`
+- `web-ext`
+
+Then, run `bun install`.
+
+### Running
+
+```sh
+bun run watch
+```
+
+This starts two scripts that watches for changes and updates the extension on an
+test browser instance.
+
+Currently, the watch script accepts additional args to be provided to the
+`web-ext` script. By default, it opens up a firefox instance, but you can change
+it by providing a `--target` option:
+
+```sh
+bun run watch -- --target chromium
+```
+
+### Testing
+
+todo
+
+### Notes
+
+Currently, `bundle.mts` watches for changes in the `assets/` and `src` folder.
+On change, this triggers `bun` to output data into the `dist` folder. The `dist`
+folder is watched/used by `web-ext` for testing/building.
+
+The `assets/` folder are items that should be directly copied over without
+changes to the `dist` folder. This is for things that `bun` either name-mangles
+or "helps" out by processing it into a `.js` file. Notably, the manifest file
+and various "simplier" files are here.
+
+The `src/` folder contains assets that need to be compiled. This is for any
+other files.

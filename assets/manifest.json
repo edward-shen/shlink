@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Shlink",
   "version": "0.5.3",
   "description": "Unofficial Shlink extension",
@@ -13,6 +13,7 @@
   },
   "permissions": [
     "tabs",
+    "offscreen",
     "notifications",
     "clipboardWrite",
     "storage"
@@ -20,7 +21,7 @@
   "options_ui": {
     "page": "options.html"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "icons/shlink-16.png",
       "48": "icons/shlink-48.png",
@@ -31,10 +32,16 @@
     },
     "default_title": "Link it!"
   },
+  "minimum_chrome_version": "121",
   "background": {
-    "scripts": [
-      "lib/browser-polyfill.min.js",
-      "background.js"
-    ]
+    "service_worker": "background.js",
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{83ffd475-2a37-44aa-8a1e-658bbcd746cb}",
+      "strict_min_version": "121.0"
+    }
   }
 }
