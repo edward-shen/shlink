@@ -32,7 +32,7 @@ async function setupOffscreenDocument(path: string = "offscreen.html") {
   // of them is the offscreen document with the given path
   const offscreenUrl = chrome.runtime.getURL(path);
   const existingContexts = await chrome.runtime.getContexts({
-    contextTypes: ['OFFSCREEN_DOCUMENT'],
+    contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
     documentUrls: [offscreenUrl]
   });
 

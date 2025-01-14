@@ -1,9 +1,25 @@
-const DISTRIBUTION_DIR = "./dist";
 
 import { promises } from 'fs';
+import { parseArgs } from "util";
 
+const DISTRIBUTION_DIR = "./dist";
+const WATCHED_FILE_PATHS = [
+  "src/",
+  "assets/",
+];
 
-const compile = async () => {
+const { values, positionals: _ } = parseArgs({
+  args: Bun.argv,
+  options: {
+    watch: {
+      type: 'boolean',
+    },
+  },
+  strict: true,
+  allowPositionals: true,
+});
+
+async function compile() {
   await Bun.build({
     entrypoints: [
       "./src/background.mts",
@@ -18,27 +34,25 @@ const compile = async () => {
   await promises.cp("assets/", "dist/", { "recursive": true });
 }
 
-const watcher = promises.watch(import.meta.dir, { recursive: true });
-
-process.on("SIGINT", () => {
-  // close watcher when Ctrl-C is pressed
-  console.log("Closing watcher...");
-
-  process.exit(0);
-});
-
 await compile();
 
-const WATCHED_FILE_PATHS = [
-  "src/",
-  "assets/",
-];
+if (values.watch) {
 
-for await (const event of watcher) {
-  for (const prefix of WATCHED_FILE_PATHS) {
-    if (event.filename?.startsWith(prefix)) {
-      console.log(`${event.filename} changed`);
-      await compile();
+  const watcher = promises.watch(import.meta.dir, { recursive: true });
+
+  process.on("SIGINT", () => {
+    // close watcher when Ctrl-C is pressed
+    console.log("Closing watcher...");
+    process.exit(0);
+  });
+
+
+  for await (const event of watcher) {
+    for (const prefix of WATCHED_FILE_PATHS) {
+      if (event.filename?.startsWith(prefix)) {
+        console.log(`${event.filename} changed`);
+        await compile();
+      }
     }
   }
 }

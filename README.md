@@ -53,6 +53,7 @@ This extension keeps your API key in plaintext in your local browser storage.
 | [`tabs`][tabs-api]                | Needed so that the extension read the current active tab.                                         |
 | [`notifications`][notif-api]      | Needed so that the extension can inform users if generating the short link was successful or not. |
 | [`clipboardWrite`][clipboard-api] | Needed so that the extension can copy the short link to your clipboard.                           |
+| [`offscreen`][offscreen-api]      | _Chrome only_. Needed to [workaround clipboard writing] to an offscreen doc.                      |
 | [`storage`][storage-api]          | Needed so that the extension can save the location of a Shlinker instance and your API key.       |
 
 [home-page]: https://shlink.io
@@ -61,8 +62,9 @@ This extension keeps your API key in plaintext in your local browser storage.
 [tabs-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs
 [notif-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/notifications
 [clipboard-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/clipboard
+[offscreen-api]: https://developer.chrome.com/docs/extensions/reference/api/offscreen
+[workaround clipboard writing]: https://developer.chrome.com/blog/Offscreen-Documents-in-Manifest-v3/
 [storage-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage
-[all-urls-api]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns
 
 ## Developing
 

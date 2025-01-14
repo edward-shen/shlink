@@ -1,1 +1,5 @@
 telemetry = false
+
+[test]
+preload = "./happydom.ts"
+coverage = true

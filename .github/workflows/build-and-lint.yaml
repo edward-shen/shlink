@@ -2,9 +2,9 @@ name: "Build and lint"
 on: push
 
 jobs:
-  build-and-lint:
+  web-ext:
     runs-on: ubuntu-latest
-    name: "Build and Lint"
+    name: "web-ext Build and Lint"
     strategy:
       matrix:
         command: ["build", "lint"]
@@ -20,3 +20,15 @@ jobs:
           cmd: ${{ matrix.command }}
           source: .
           channel: listed
+  bun-tests:
+    name: "Bun tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies # (assuming your project has dependencies)
+        run: bun install # You can use npm/yarn/pnpm instead if you prefer
+      - name: Run tests
+        run: bun test
