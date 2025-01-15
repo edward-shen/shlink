@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ShlinkConfig } from "./config.mts";
+import type { ShlinkConfig } from "../lib/config.mts";
 
 interface ShlinkRequest extends ShlinkConfig {
   longUrl: string; // The requested URL to shorten.

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ConfigManager, type ShlinkConfig } from "./config.mts";
+import { ConfigManager, type ShlinkConfig } from "../lib/config.mts";
 
 var browser = require("webextension-polyfill");
 

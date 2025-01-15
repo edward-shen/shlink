@@ -22,3 +22,26 @@ Set {
   "shlinkHost": "",
 }
 `;
+
+exports[`ConfigManager defaults match snapshot 1`] = `
+{
+  "allowedProtocols":   
+Set {
+    "http:",
+    "https:",
+    "ftp:",
+    "file:",
+  }
+,
+  "createOptions": {
+    "findIfExists": true,
+    "tagShortUrl": true,
+  },
+  "modifyOptions": {
+    "shortUrl": "",
+  },
+  "shlinkApiKey": "",
+  "shlinkButtonOption": "create",
+  "shlinkHost": "",
+}
+`;

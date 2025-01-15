@@ -16,14 +16,15 @@ const { values, positionals: _ } = parseArgs({
 });
 
 async function compile() {
-  await promises.rm("dist/", { recursive: true, force: true });
+  await promises.rm(DISTRIBUTION_DIR, { recursive: true, force: true });
 
-  await Bun.build({
+  const result = await Bun.build({
     entrypoints: [
-      "./src/background.mts",
-      "./src/options.html",
-      "./src/offscreen.html",
+      "./src/background/background.mts",
+      "./src/options/options.html",
+      "./src/offscreen/offscreen.html",
     ],
+    naming: "[name].[ext]", // Keep all entrypoints at the root
     html: true,
     experimentalCss: true,
     outdir: DISTRIBUTION_DIR,
@@ -32,7 +33,14 @@ async function compile() {
     minify: true,
   });
 
-  await promises.cp("assets/", "dist/", { recursive: true });
+  if (!result.success) {
+    console.error("Build failed");
+    for (const message of result.logs) {
+      console.error(message);
+    }
+  }
+
+  await promises.cp("assets/", DISTRIBUTION_DIR, { recursive: true });
 }
 
 await compile();

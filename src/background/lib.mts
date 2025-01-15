@@ -17,7 +17,7 @@
  */
 
 import type { Storage } from "webextension-polyfill";
-import { ConfigManager } from "./config.mts";
+import { ConfigManager } from "../lib/config.mts";
 import type { ShlinkRequest } from "./shlink_request.mts";
 import type {
   ShlinkCreateShortUrlData,

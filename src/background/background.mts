@@ -18,8 +18,8 @@
 
 import { validateURL, generateShlinkRequest, requestShlink } from "./lib.mts";
 import * as browser from "webextension-polyfill";
-import { notifySuccess, notifyError } from "./notify.mts";
-import { copyLinkToClipboard } from "./clipboard.mts";
+import { notifySuccess, notifyError } from "../background/notify.mts";
+import { copyLinkToClipboard } from "../background/clipboard.mts";
 
 /**
  * Main function for generating a shortened link.
