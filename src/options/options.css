@@ -1,40 +1,39 @@
-
 body {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    height: 300px;
-  }
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  height: 300px;
+}
 
-  div {
-    display: flex;
-    align-items: baseline;
-  }
+div {
+  display: flex;
+  align-items: baseline;
+}
 
-  label {
-    text-align: right;
-    padding: 0 10px;
-    width: 600px;
-    align-items: baseline;
-    padding: 5px 0;
-  }
+label {
+  text-align: right;
+  padding: 0 10px;
+  width: 600px;
+  align-items: baseline;
+  padding: 5px 0;
+}
 
-  input,
-  .click-behavior select {
-    margin-left: 10px;
-    min-width: 300px;
-    min-height: 17px;
-  }
+input,
+.click-behavior select {
+  margin-left: 10px;
+  min-width: 300px;
+  min-height: 17px;
+}
 
-  .hidden {
-    display: none;
-  }
+.hidden {
+  display: none;
+}
 
-  .invalid-value {
-    color: red;
-  }
+.invalid-value {
+  color: red;
+}
 
-  main {
-    display: flex;
-    flex-direction: column;
-  }
+main {
+  display: flex;
+  flex-direction: column;
+}
