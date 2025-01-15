@@ -22,6 +22,7 @@ async function compile() {
     entrypoints: [
       "./src/background.mts",
       "./src/options.html",
+      "./src/offscreen.html",
     ],
     html: true,
     experimentalCss: true,
