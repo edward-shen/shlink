@@ -3,47 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        padding: 5px;
-        height: 300px;
-      }
-
-      div {
-        display: flex;
-        align-items: baseline;
-      }
-
-      label {
-        text-align: right;
-        padding: 0 10px;
-        width: 600px;
-        align-items: baseline;
-        padding: 5px 0;
-      }
-
-      input,
-      .click-behavior select {
-        margin-left: 10px;
-        min-width: 300px;
-        min-height: 17px;
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      .invalid-value {
-        color: red;
-      }
-
-      main {
-        display: flex;
-        flex-direction: column;
-      }
-    </style>
+    <link rel="stylesheet" href="./options.css"></style>
   </head>
 
   <body>
@@ -112,6 +72,6 @@
       </label>
     </main>
 
-    <script src="options.js"></script>
+    <script src="./options.mts" type="module"></script>
   </body>
 </html>

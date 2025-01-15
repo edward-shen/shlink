@@ -16,8 +16,15 @@ const { values, positionals: _ } = parseArgs({
 });
 
 async function compile() {
+  await promises.rm("dist/", { recursive: true, force: true });
+
   await Bun.build({
-    entrypoints: ["./src/background.mts", "./src/options.mts"],
+    entrypoints: [
+      "./src/background.mts",
+      "./src/options.html",
+    ],
+    html: true,
+    experimentalCss: true,
     outdir: DISTRIBUTION_DIR,
     sourcemap: "linked",
     target: "browser",
