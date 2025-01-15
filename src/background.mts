@@ -17,8 +17,8 @@
  */
 
 import { validateURL, generateShlinkRequest, requestShlink } from "./lib.mts";
-import * as browser from 'webextension-polyfill';
-import { notifySuccess, notifyError } from './notify.mts';
+import * as browser from "webextension-polyfill";
+import { notifySuccess, notifyError } from "./notify.mts";
 import { copyLinkToClipboard } from "./clipboard.mts";
 
 /**
@@ -29,21 +29,36 @@ async function generateShlink() {
   const notifications = browser.notifications;
 
   try {
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const tabs = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     console.debug("Extracting tab data");
     let activeTab = tabs.pop();
     if (!activeTab) {
       throw new Error("Failed to extract tab information");
     }
     if (!activeTab.url) {
-      throw new Error("Failed to extract URL from tab -- missing manifest permission?");
+      throw new Error(
+        "Failed to extract URL from tab -- missing manifest permission?",
+      );
     }
     if (!activeTab.title) {
-      throw new Error("Failed to extract title from tab -- missing manifest permission?");
+      throw new Error(
+        "Failed to extract title from tab -- missing manifest permission?",
+      );
     }
 
-    const validatedUrl = await validateURL(storage, new URL(activeTab.url), activeTab.title, activeTab.id);
-    const generatedShlinkRequest = await generateShlinkRequest(storage, validatedUrl);
+    const validatedUrl = await validateURL(
+      storage,
+      new URL(activeTab.url),
+      activeTab.title,
+      activeTab.id,
+    );
+    const generatedShlinkRequest = await generateShlinkRequest(
+      storage,
+      validatedUrl,
+    );
     const shlinkResponse = await requestShlink(generatedShlinkRequest);
     await copyLinkToClipboard(shlinkResponse);
     await notifySuccess(notifications, shlinkResponse);

@@ -27,25 +27,25 @@
 // offscreen document will be able to receive messages when the promise returned
 // by `offscreen.createDocument()` resolves.
 chrome.runtime.onMessage.addListener(async (message) => {
-  if (message.target !== 'offscreen-doc') {
+  if (message.target !== "offscreen-doc") {
     return;
   }
   handleClipboardWrite(message.text);
 });
 
-const textEl = document.querySelector('#text');
+const textEl = document.querySelector("#text");
 
 async function handleClipboardWrite(data) {
   try {
-    if (typeof data !== 'string') {
+    if (typeof data !== "string") {
       throw new TypeError(
-        `Value provided must be a 'string', got '${typeof data}'.`
+        `Value provided must be a 'string', got '${typeof data}'.`,
       );
     }
 
     textEl.value = data;
     textEl.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
   } finally {
     window.close();
   }

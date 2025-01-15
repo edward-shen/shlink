@@ -1,111 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        height: 300px;
+      }
 
-<head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      padding: 5px;
-      height: 300px;
-    }
+      div {
+        display: flex;
+        align-items: baseline;
+      }
 
-    div {
-      display: flex;
-      align-items: baseline;
-    }
+      label {
+        text-align: right;
+        padding: 0 10px;
+        width: 600px;
+        align-items: baseline;
+        padding: 5px 0;
+      }
 
-    label {
-      text-align: right;
-      padding: 0 10px;
-      width: 600px;
-      align-items: baseline;
-      padding: 5px 0;
-    }
+      input,
+      .click-behavior select {
+        margin-left: 10px;
+        min-width: 300px;
+        min-height: 17px;
+      }
 
-    input,
-    .click-behavior select {
-      margin-left: 10px;
-      min-width: 300px;
-      min-height: 17px;
-    }
+      .hidden {
+        display: none;
+      }
 
-    .hidden {
-      display: none;
-    }
+      .invalid-value {
+        color: red;
+      }
 
-    .invalid-value {
-      color: red;
-    }
+      main {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
 
-    main {
-      display: flex;
-      flex-direction: column;
-    }
-  </style>
-</head>
+  <body>
+    <h3>Global settings</h3>
 
-<body>
-  <h3>Global settings</h3>
-
-  <label>
-    Host URL
-    <input type="text" id="host" placeholder="https://example.com">
-  </label>
-  <label>
-    API Key
-    <input type="text" id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxlength="36">
-  </label>
-
-  <h4>Protocol filters</h4>
-  <label>
-    Allow <code>http://</code> links
-    <input type="checkbox" id="allow-http">
-  </label>
-  <label>
-    Allow <code>https://</code> links
-    <input type="checkbox" id="allow-https">
-  </label>
-  <label>
-    Allow <code>file://</code> links
-    <input type="checkbox" id="allow-file">
-  </label>
-  <label>
-    Allow <code>ftp://</code> links
-    <input type="checkbox" id="allow-ftp">
-  </label>
-  <p>Disabling all filters will allow a Shlink to be created or modified from any URL.</p>
-
-  <h3>Button behavior</h3>
-  <label class="click-behavior">
-    On click,
-    <select id="click-behavior">
-      <option value="create">Create a Shlink</option>
-      <option value="modify">Modify a Shlink</option>
-    </select>
-  </label>
-
-  <main id="create-options" class="hidden">
     <label>
-      Use existing Shlink if exists
-      <input type="checkbox" id="create-findIfExists">
+      Host URL
+      <input type="text" id="host" placeholder="https://example.com" />
     </label>
     <label>
-      Tag Shlinks created with this extension
-      <input type="checkbox" id="create-tagShortUrl">
+      API Key
+      <input
+        type="text"
+        id="key"
+        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        maxlength="36"
+      />
     </label>
-  </main>
 
-  <main id="modify-options" class="hidden">
+    <h4>Protocol filters</h4>
     <label>
-      Short url to modify
-      <input type="text" id="modify-shortUrl">
+      Allow <code>http://</code> links
+      <input type="checkbox" id="allow-http" />
     </label>
-  </main>
+    <label>
+      Allow <code>https://</code> links
+      <input type="checkbox" id="allow-https" />
+    </label>
+    <label>
+      Allow <code>file://</code> links
+      <input type="checkbox" id="allow-file" />
+    </label>
+    <label>
+      Allow <code>ftp://</code> links
+      <input type="checkbox" id="allow-ftp" />
+    </label>
+    <p>
+      Disabling all filters will allow a Shlink to be created or modified from
+      any URL.
+    </p>
 
-  <script src="options.js"></script>
-</body>
+    <h3>Button behavior</h3>
+    <label class="click-behavior">
+      On click,
+      <select id="click-behavior">
+        <option value="create">Create a Shlink</option>
+        <option value="modify">Modify a Shlink</option>
+      </select>
+    </label>
 
+    <main id="create-options" class="hidden">
+      <label>
+        Use existing Shlink if exists
+        <input type="checkbox" id="create-findIfExists" />
+      </label>
+      <label>
+        Tag Shlinks created with this extension
+        <input type="checkbox" id="create-tagShortUrl" />
+      </label>
+    </main>
+
+    <main id="modify-options" class="hidden">
+      <label>
+        Short url to modify
+        <input type="text" id="modify-shortUrl" />
+      </label>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
 </html>

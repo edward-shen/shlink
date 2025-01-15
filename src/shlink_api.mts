@@ -16,7 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ShlinkCreateShortUrlData, ShlinkEditShortUrlData, ShlinkShortUrl } from "@shlinkio/shlink-js-sdk/api-contract";
+import type {
+  ShlinkCreateShortUrlData,
+  ShlinkEditShortUrlData,
+  ShlinkShortUrl,
+} from "@shlinkio/shlink-js-sdk/api-contract";
 
 // This class only exists because the provided sdk doesn't provide sufficient
 // error information to return meaningful responses.
@@ -36,26 +40,27 @@ class ShlinkRestClient {
 
   createShortUrl(options: ShlinkCreateShortUrlData): Promise<ShlinkShortUrl> {
     console.debug("Creating new url");
-    return fetch(new Request(
-      `${this.#hostname}/rest/v3/short-urls`,
-      {
-        method: 'POST',
+    return fetch(
+      new Request(`${this.#hostname}/rest/v3/short-urls`, {
+        method: "POST",
         headers: this.#headers,
         body: JSON.stringify(options),
-      },
-    )).then(validateShlinkResponse, debugConnError);
+      }),
+    ).then(validateShlinkResponse, debugConnError);
   }
 
-  updateShortUrl(shortUrl: string, options: ShlinkEditShortUrlData): Promise<ShlinkShortUrl> {
+  updateShortUrl(
+    shortUrl: string,
+    options: ShlinkEditShortUrlData,
+  ): Promise<ShlinkShortUrl> {
     console.debug("Patching existing url");
-    return fetch(new Request(
-      `${this.#hostname}/rest/v3/short-urls/${shortUrl}`,
-      {
-        method: 'PATCH',
+    return fetch(
+      new Request(`${this.#hostname}/rest/v3/short-urls/${shortUrl}`, {
+        method: "PATCH",
         headers: this.#headers,
-        body: JSON.stringify(options)
-      }
-    )).then(validateShlinkResponse, debugConnError);
+        body: JSON.stringify(options),
+      }),
+    ).then(validateShlinkResponse, debugConnError);
   }
 }
 
@@ -68,30 +73,36 @@ class ShlinkRestClient {
  * response if the server responded successfully, or an error describing the
  * HTTP error code returned by the server.
  */
-async function validateShlinkResponse(httpResp: Response): Promise<ShlinkShortUrl> {
+async function validateShlinkResponse(
+  httpResp: Response,
+): Promise<ShlinkShortUrl> {
   console.debug("Validating shlink repsonse");
   if (httpResp.ok) {
     return await httpResp.json();
   } else if (httpResp.status >= 400 && httpResp.status < 500) {
     throw new Error(
       `Got error code ${httpResp.status}. ` +
-      "Please check if you've configured the Shlink extension correctly."
+        "Please check if you've configured the Shlink extension correctly.",
     );
   } else if (httpResp.status >= 500 && httpResp.status < 600) {
     throw new Error(
       `Got error code ${httpResp.status}. ` +
-      "Please check if the Shlink server is properly configured."
+        "Please check if the Shlink server is properly configured.",
     );
   } else {
     throw new Error(
-      `Got unknown error code ${httpResp.status}. Please try again later.`
+      `Got unknown error code ${httpResp.status}. Please try again later.`,
     );
   }
 }
 
 function debugConnError(error: Error): Promise<never> {
   console.error(error);
-  return Promise.reject(new Error("Failed to fetch. Please check if you've configured Shlink extension's Host URL correctly."));
+  return Promise.reject(
+    new Error(
+      "Failed to fetch. Please check if you've configured Shlink extension's Host URL correctly.",
+    ),
+  );
 }
 
 export { ShlinkRestClient };

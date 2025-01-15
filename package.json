@@ -11,7 +11,8 @@
     "@types/bun": "^1.1.16",
     "@types/chrome": "^0.0.293",
     "@types/webextension-polyfill": "^0.12.1",
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -20,6 +21,8 @@
     "build": "bun run bundle.mts",
     "run:web-ext": "web-ext run",
     "watch": "bun run concurrently --kill-others --success last --passthrough-arguments --names bun,web-ext 'bun run build --watch' 'bun run run:web-ext {@}' --",
+    "lint": "bun run prettier . --write",
+    "lint:check": "bun run prettier . --check",
     "clean": "rm -rf dist",
     "purge": "bun run clean; rm -rf node_modules"
   }

@@ -16,16 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ShlinkShortUrl } from '@shlinkio/shlink-js-sdk/api-contract';
-import * as browser from 'webextension-polyfill';
+import type { ShlinkShortUrl } from "@shlinkio/shlink-js-sdk/api-contract";
+import * as browser from "webextension-polyfill";
 
-function notifyAny(notifications: browser.Notifications.Static, title: string, message: string) {
-    notifications.create({
-        type: "basic",
-        title,
-        iconUrl: "icons/shlink-64.png",
-        message,
-    });
+function notifyAny(
+  notifications: browser.Notifications.Static,
+  title: string,
+  message: string,
+) {
+  notifications.create({
+    type: "basic",
+    title,
+    iconUrl: "icons/shlink-64.png",
+    message,
+  });
 }
 
 /**
@@ -34,9 +38,16 @@ function notifyAny(notifications: browser.Notifications.Static, title: string, m
  * @param {!ShlinkShortUrl} response A successful Shlink response.
  * @returns {null}
  */
-function notifySuccess(notifications: browser.Notifications.Static, result: ShlinkShortUrl) {
-    console.log("Sending success notification");
-    notifyAny(notifications, "Shlink copied!", `${result.shortUrl} was copied to your clipboard.`);
+function notifySuccess(
+  notifications: browser.Notifications.Static,
+  result: ShlinkShortUrl,
+) {
+  console.log("Sending success notification");
+  notifyAny(
+    notifications,
+    "Shlink copied!",
+    `${result.shortUrl} was copied to your clipboard.`,
+  );
 }
 
 /**
@@ -45,9 +56,12 @@ function notifySuccess(notifications: browser.Notifications.Static, result: Shli
  * @param {!Error} error An error with a message to notify users with.
  * @returns {null}
  */
-function notifyError(notifications: browser.Notifications.Static, error: Error) {
-    console.log("Sending error notification");
-    notifyAny(notifications, "Failed to create Shlink", error.message);
+function notifyError(
+  notifications: browser.Notifications.Static,
+  error: Error,
+) {
+  console.log("Sending error notification");
+  notifyAny(notifications, "Failed to create Shlink", error.message);
 }
 
 export { notifySuccess, notifyError };

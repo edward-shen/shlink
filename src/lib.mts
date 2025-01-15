@@ -19,9 +19,12 @@
 import type { Storage } from "webextension-polyfill";
 import { ConfigManager } from "./config.mts";
 import type { ShlinkRequest } from "./shlink_request.mts";
-import type { ShlinkCreateShortUrlData, ShlinkEditShortUrlData, ShlinkShortUrl } from "@shlinkio/shlink-js-sdk/api-contract";
+import type {
+  ShlinkCreateShortUrlData,
+  ShlinkEditShortUrlData,
+  ShlinkShortUrl,
+} from "@shlinkio/shlink-js-sdk/api-contract";
 import { ShlinkRestClient } from "./shlink_api.mts";
-
 
 class ValidatedUrl {
   url: URL;
@@ -47,11 +50,20 @@ class ValidatedUrl {
  * @returns {!Promise<ValidatedUrl>} An unmodified URL and title if it was a valid link,
  * else an error describing why it was unsupported.
  */
-async function validateURL(storage: Storage.StorageArea, url: URL, title: string, tabId: number | undefined): Promise<ValidatedUrl> {
-  const allowedProtocols = await new ConfigManager(storage).getAllowedProtocols();
+async function validateURL(
+  storage: Storage.StorageArea,
+  url: URL,
+  title: string,
+  tabId: number | undefined,
+): Promise<ValidatedUrl> {
+  const allowedProtocols = await new ConfigManager(
+    storage,
+  ).getAllowedProtocols();
 
   if (allowedProtocols.size > 0 && !allowedProtocols.has(url.protocol)) {
-    throw new Error(`The current page's protocol (${url.protocol}) is unsupported.`);
+    throw new Error(
+      `The current page's protocol (${url.protocol}) is unsupported.`,
+    );
   }
 
   return new ValidatedUrl(url, title, tabId);
@@ -67,7 +79,10 @@ async function validateURL(storage: Storage.StorageArea, url: URL, title: string
  * get all the data necessary to send a request, else an error explaining what's
  * missing.
  */
-async function generateShlinkRequest(storage: Storage.StorageArea, { url, title, tabId }: ValidatedUrl): Promise<ShlinkRequest> {
+async function generateShlinkRequest(
+  storage: Storage.StorageArea,
+  { url, title, tabId }: ValidatedUrl,
+): Promise<ShlinkRequest> {
   console.debug("Generating Shlink Request");
   let config = await new ConfigManager(storage).get();
 
@@ -115,7 +130,10 @@ function requestShlink(shlinkRequest: ShlinkRequest): Promise<ShlinkShortUrl> {
       options.tags = ["shlink-extension"];
     }
 
-    const client = new ShlinkRestClient(shlinkRequest.shlinkHost, shlinkRequest.shlinkApiKey);
+    const client = new ShlinkRestClient(
+      shlinkRequest.shlinkHost,
+      shlinkRequest.shlinkApiKey,
+    );
     return client.createShortUrl(options);
   } else {
     console.debug("Using Modify endpoint");
@@ -123,7 +141,10 @@ function requestShlink(shlinkRequest: ShlinkRequest): Promise<ShlinkShortUrl> {
       longUrl: shlinkRequest.longUrl,
       title: shlinkRequest.title,
     };
-    const client = new ShlinkRestClient(shlinkRequest.shlinkHost, shlinkRequest.shlinkApiKey);
+    const client = new ShlinkRestClient(
+      shlinkRequest.shlinkHost,
+      shlinkRequest.shlinkApiKey,
+    );
     return client.updateShortUrl(shlinkRequest.modifyOptions.shortUrl, options);
   }
 }

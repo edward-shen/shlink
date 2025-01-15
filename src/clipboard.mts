@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ShlinkShortUrl } from '@shlinkio/shlink-js-sdk/api-contract';
-import { writeToOffscreenClipboard } from './offscreen_handler.mts';
+import type { ShlinkShortUrl } from "@shlinkio/shlink-js-sdk/api-contract";
+import { writeToOffscreenClipboard } from "./offscreen_handler.mts";
 
 /**
  * Copies the shortened link provided from the Shlink instance to the clipboard.
@@ -26,27 +26,29 @@ import { writeToOffscreenClipboard } from './offscreen_handler.mts';
  * @returns {!Promise<ShlinkShortUrl>} `shlinkResp`, unmodified, on
  * success, or an error indicating that we failed to copy to the clipboard.
  */
-async function copyLinkToClipboard(shlinkResp: ShlinkShortUrl): Promise<ShlinkShortUrl> {
-    console.debug("Copying to clipboard");
-    // God fucking dammit Chrome. You can't directly write to the clipboard when
-    // as a service_worker with the clipboard API (despite even having the
-    // permission), so we instead just do this hacky workaround instead.
-    if (isChrome(navigator.clipboard)) {
-        console.info("Using Chrome fallback");
-        await writeToOffscreenClipboard(shlinkResp.shortUrl);
-    } else {
-        console.debug("Using navigator.clipboard");
-        try {
-            await navigator.clipboard.writeText(shlinkResp.shortUrl);
-        } catch (e: any) {
-            throw new Error(`Failed to copy to clipboard. ${e.message}`);
-        }
+async function copyLinkToClipboard(
+  shlinkResp: ShlinkShortUrl,
+): Promise<ShlinkShortUrl> {
+  console.debug("Copying to clipboard");
+  // God fucking dammit Chrome. You can't directly write to the clipboard when
+  // as a service_worker with the clipboard API (despite even having the
+  // permission), so we instead just do this hacky workaround instead.
+  if (isChrome(navigator.clipboard)) {
+    console.info("Using Chrome fallback");
+    await writeToOffscreenClipboard(shlinkResp.shortUrl);
+  } else {
+    console.debug("Using navigator.clipboard");
+    try {
+      await navigator.clipboard.writeText(shlinkResp.shortUrl);
+    } catch (e: any) {
+      throw new Error(`Failed to copy to clipboard. ${e.message}`);
     }
-    return shlinkResp;
+  }
+  return shlinkResp;
 }
 
 function isChrome(clipboard: Clipboard | undefined): boolean {
-    return !clipboard?.writeText && typeof chrome !== 'undefined';
+  return !clipboard?.writeText && typeof chrome !== "undefined";
 }
 
 export { copyLinkToClipboard, isChrome };

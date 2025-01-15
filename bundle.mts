@@ -1,18 +1,14 @@
-
-import { promises } from 'fs';
+import { promises } from "fs";
 import { parseArgs } from "util";
 
 const DISTRIBUTION_DIR = "./dist";
-const WATCHED_FILE_PATHS = [
-  "src/",
-  "assets/",
-];
+const WATCHED_FILE_PATHS = ["src/", "assets/"];
 
 const { values, positionals: _ } = parseArgs({
   args: Bun.argv,
   options: {
     watch: {
-      type: 'boolean',
+      type: "boolean",
     },
   },
   strict: true,
@@ -21,23 +17,19 @@ const { values, positionals: _ } = parseArgs({
 
 async function compile() {
   await Bun.build({
-    entrypoints: [
-      "./src/background.mts",
-      "./src/options.mts",
-    ],
+    entrypoints: ["./src/background.mts", "./src/options.mts"],
     outdir: DISTRIBUTION_DIR,
     sourcemap: "linked",
     target: "browser",
     minify: true,
   });
 
-  await promises.cp("assets/", "dist/", { "recursive": true });
+  await promises.cp("assets/", "dist/", { recursive: true });
 }
 
 await compile();
 
 if (values.watch) {
-
   const watcher = promises.watch(import.meta.dir, { recursive: true });
 
   process.on("SIGINT", () => {
@@ -45,7 +37,6 @@ if (values.watch) {
     console.log("Closing watcher...");
     process.exit(0);
   });
-
 
   for await (const event of watcher) {
     for (const prefix of WATCHED_FILE_PATHS) {

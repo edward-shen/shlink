@@ -33,7 +33,7 @@ async function setupOffscreenDocument(path: string = "offscreen.html") {
   const offscreenUrl = chrome.runtime.getURL(path);
   const existingContexts = await chrome.runtime.getContexts({
     contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
-    documentUrls: [offscreenUrl]
+    documentUrls: [offscreenUrl],
   });
 
   if (existingContexts.length > 0) {
@@ -49,7 +49,7 @@ async function setupOffscreenDocument(path: string = "offscreen.html") {
     creating = chrome.offscreen.createDocument({
       url: path,
       reasons: [chrome.offscreen.Reason.CLIPBOARD],
-      justification: 'Writing text to the clipboard',
+      justification: "Writing text to the clipboard",
     });
     await creating;
     creating = null;

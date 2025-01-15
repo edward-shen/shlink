@@ -20,21 +20,31 @@ import { ConfigManager, type ShlinkConfig } from "./config.mts";
 
 var browser = require("webextension-polyfill");
 
-"use strict";
+("use strict");
 
 // Element lookups
 const hostKeyEle = document.getElementById("host")! as HTMLInputElement;
 const apiKeyEle = document.getElementById("key")! as HTMLInputElement;
 const AllowHttpEle = document.getElementById("allow-http")! as HTMLInputElement;
-const AllowHttpsEle = document.getElementById("allow-https")! as HTMLInputElement;
+const AllowHttpsEle = document.getElementById(
+  "allow-https",
+)! as HTMLInputElement;
 const AllowFileEle = document.getElementById("allow-file")! as HTMLInputElement;
 const AllowFtpEle = document.getElementById("allow-ftp")! as HTMLInputElement;
-const clickBehaviorEle = document.getElementById("click-behavior")! as HTMLSelectElement;
+const clickBehaviorEle = document.getElementById(
+  "click-behavior",
+)! as HTMLSelectElement;
 const createOptionsEle = document.getElementById("create-options")!;
-const createOptionsFindIfExistsEle = document.getElementById("create-findIfExists")! as HTMLInputElement;
-const createOptionsTagShortUrlEle = document.getElementById("create-tagShortUrl")! as HTMLInputElement;
+const createOptionsFindIfExistsEle = document.getElementById(
+  "create-findIfExists",
+)! as HTMLInputElement;
+const createOptionsTagShortUrlEle = document.getElementById(
+  "create-tagShortUrl",
+)! as HTMLInputElement;
 const modifyOptionsEle = document.getElementById("modify-options")!;
-const modifyOptionsShortUrlEle = document.getElementById("modify-shortUrl")! as HTMLInputElement;
+const modifyOptionsShortUrlEle = document.getElementById(
+  "modify-shortUrl",
+)! as HTMLInputElement;
 
 // Global shorthands
 const browserStorage = browser.storage.local;
@@ -61,7 +71,6 @@ hostKeyEle.oninput = (event) => {
   } catch (_) {
     hostKeyEle.classList.add("invalid-value");
   }
-
 };
 
 apiKeyEle.oninput = (event) => {
@@ -70,7 +79,8 @@ apiKeyEle.oninput = (event) => {
   }
 
   // Apparently the API key is a UUID
-  const apiKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const apiKeyRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const shlinkApiKey = apiKeyEle.value;
 
   if (apiKeyRegex.test(shlinkApiKey)) {
@@ -124,17 +134,17 @@ clickBehaviorEle.onchange = () => {
     case "create":
       modifyOptionsEle.classList.add("hidden");
       createOptionsEle.classList.remove("hidden");
-      browserStorage.set({ "shlinkButtonOption": clickBehaviorEle.value });
+      browserStorage.set({ shlinkButtonOption: clickBehaviorEle.value });
       break;
     case "modify":
       modifyOptionsEle.classList.remove("hidden");
       createOptionsEle.classList.add("hidden");
-      browserStorage.set({ "shlinkButtonOption": clickBehaviorEle.value });
+      browserStorage.set({ shlinkButtonOption: clickBehaviorEle.value });
       break;
     default:
       console.error(`Got unknown click behavior: ${clickBehaviorEle.value}`);
   }
-}
+};
 
 modifyOptionsShortUrlEle.oninput = async (event) => {
   if (event.type === "click") {
@@ -153,9 +163,16 @@ modifyOptionsShortUrlEle.oninput = async (event) => {
     current.shortUrl = modifyOptionsShortUrlEle.value;
     return current;
   });
-}
+};
 
-function setCurrentChoice({ shlinkHost, shlinkApiKey, allowedProtocols, shlinkButtonOption, createOptions, modifyOptions }: ShlinkConfig) {
+function setCurrentChoice({
+  shlinkHost,
+  shlinkApiKey,
+  allowedProtocols,
+  shlinkButtonOption,
+  createOptions,
+  modifyOptions,
+}: ShlinkConfig) {
   hostKeyEle.value = shlinkHost || "";
   apiKeyEle.value = shlinkApiKey || "";
 
@@ -166,7 +183,6 @@ function setCurrentChoice({ shlinkHost, shlinkApiKey, allowedProtocols, shlinkBu
   AllowHttpsEle.checked = allowedProtocols.has("https:");
   AllowFileEle.checked = allowedProtocols.has("file:");
   AllowFtpEle.checked = allowedProtocols.has("ftp:");
-
 
   createOptionsFindIfExistsEle.checked = !!createOptions.findIfExists;
   createOptionsTagShortUrlEle.checked = !!createOptions.tagShortUrl;
@@ -188,6 +204,8 @@ function setCurrentChoice({ shlinkHost, shlinkApiKey, allowedProtocols, shlinkBu
   }
 }
 
-new ConfigManager(browserStorage).get().then(setCurrentChoice, (error: Error) => {
-  console.log(`Error: ${error}`);
-});
+new ConfigManager(browserStorage)
+  .get()
+  .then(setCurrentChoice, (error: Error) => {
+    console.log(`Error: ${error}`);
+  });

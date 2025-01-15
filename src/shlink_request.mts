@@ -19,9 +19,9 @@
 import type { ShlinkConfig } from "./config.mts";
 
 interface ShlinkRequest extends ShlinkConfig {
-    longUrl: string; // The requested URL to shorten.
-    title: string; // The title of the content (from the tab).
-    tabId: number | undefined; // The tab id.
+  longUrl: string; // The requested URL to shorten.
+  title: string; // The title of the content (from the tab).
+  tabId: number | undefined; // The tab id.
 }
 
 export type { ShlinkRequest };

@@ -1,6 +1,4 @@
 module.exports = {
-  ignoreFiles: [
-    'submission-items',
-  ],
+  ignoreFiles: ["submission-items"],
   sourceDir: "dist/",
 };

@@ -16,67 +16,78 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { expect, mock, test } from 'bun:test';
-import { notifySuccess, notifyError } from './notify.mts';
-import * as browser from 'webextension-polyfill';
+import { expect, mock, test } from "bun:test";
+import { notifySuccess, notifyError } from "./notify.mts";
+import * as browser from "webextension-polyfill";
 
 class MockNotifications implements browser.Notifications.Static {
-    constructor() {
-        this.onClosed = mock() as unknown as browser.Events.Event<(notificationId: string, byUser: boolean) => void>;
-        this.onClicked = mock() as unknown as browser.Events.Event<(notificationId: string) => void>;
-        this.onButtonClicked = mock() as unknown as browser.Events.Event<(notificationId: string, buttonIndex: number) => void>;
-        this.onShown = mock() as unknown as browser.Events.Event<(notificationId: string) => void>;
-    }
+  constructor() {
+    this.onClosed = mock() as unknown as browser.Events.Event<
+      (notificationId: string, byUser: boolean) => void
+    >;
+    this.onClicked = mock() as unknown as browser.Events.Event<
+      (notificationId: string) => void
+    >;
+    this.onButtonClicked = mock() as unknown as browser.Events.Event<
+      (notificationId: string, buttonIndex: number) => void
+    >;
+    this.onShown = mock() as unknown as browser.Events.Event<
+      (notificationId: string) => void
+    >;
+  }
 
-    create(_notificationId: unknown, _options?: unknown): Promise<string> {
-        throw new Error('Method not implemented.');
-    }
+  create(_notificationId: unknown, _options?: unknown): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
 
-    clear(_notificationId: string): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
+  clear(_notificationId: string): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
 
-    getAll(): Promise<Record<string, browser.Notifications.CreateNotificationOptions>> {
-        throw new Error('Method not implemented.');
-    }
+  getAll(): Promise<
+    Record<string, browser.Notifications.CreateNotificationOptions>
+  > {
+    throw new Error("Method not implemented.");
+  }
 
-    onClosed: browser.Events.Event<(notificationId: string, byUser: boolean) => void>;
-    onClicked: browser.Events.Event<(notificationId: string) => void>;
-    onButtonClicked: browser.Events.Event<(notificationId: string, buttonIndex: number) => void>;
-    onShown: browser.Events.Event<(notificationId: string) => void>;
+  onClosed: browser.Events.Event<
+    (notificationId: string, byUser: boolean) => void
+  >;
+  onClicked: browser.Events.Event<(notificationId: string) => void>;
+  onButtonClicked: browser.Events.Event<
+    (notificationId: string, buttonIndex: number) => void
+  >;
+  onShown: browser.Events.Event<(notificationId: string) => void>;
 }
 
 test("notifySuccess creates a notifiction", async () => {
-    const dummyResponse = {
-        shortCode: "foo",
-        shortUrl: "https://example.com/foo",
-        longUrl: "https://example.com/very-long-link",
-        dateCreated: "",
-        meta: {
-            validSince: null,
-            validUntil: null,
-            maxVisits: null
-        },
-        tags: [],
-        domain: null,
-    };
+  const dummyResponse = {
+    shortCode: "foo",
+    shortUrl: "https://example.com/foo",
+    longUrl: "https://example.com/very-long-link",
+    dateCreated: "",
+    meta: {
+      validSince: null,
+      validUntil: null,
+      maxVisits: null,
+    },
+    tags: [],
+    domain: null,
+  };
 
-    let mockNotifs = new MockNotifications();
-    mockNotifs.create = mock();
+  let mockNotifs = new MockNotifications();
+  mockNotifs.create = mock();
 
-    notifySuccess(mockNotifs, dummyResponse);
+  notifySuccess(mockNotifs, dummyResponse);
 
-    expect(mockNotifs.create).toBeCalledTimes(1);
+  expect(mockNotifs.create).toBeCalledTimes(1);
 });
-
 
 test("notifyError creates a notifiction", async () => {
-    let mockNotifs = new MockNotifications();
-    mockNotifs.create = mock();
+  let mockNotifs = new MockNotifications();
+  mockNotifs.create = mock();
 
-    notifyError(mockNotifs, new Error("mock error"));
+  notifyError(mockNotifs, new Error("mock error"));
 
-    expect(mockNotifs.create).toBeCalledTimes(1);
+  expect(mockNotifs.create).toBeCalledTimes(1);
 });
-
-

@@ -21,49 +21,59 @@ import type { Events, Storage } from "webextension-polyfill";
 import * as config from "./config.mts";
 
 class MockStorage implements Storage.StorageArea {
-    constructor() {
-        this.onChanged = mock() as unknown as Events.Event<(changes: Storage.StorageAreaOnChangedChangesType) => void>;
-    }
+  constructor() {
+    this.onChanged = mock() as unknown as Events.Event<
+      (changes: Storage.StorageAreaOnChangedChangesType) => void
+    >;
+  }
 
-    get(_keys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>> {
-        throw new Error("Method not implemented.");
-    }
+  get(
+    _keys?: null | string | string[] | Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    throw new Error("Method not implemented.");
+  }
 
-    set(_items: Record<string, unknown>): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+  set(_items: Record<string, unknown>): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 
-    remove(_keys: string | string[]): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+  remove(_keys: string | string[]): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 
-    clear(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+  clear(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 
-    onChanged: Events.Event<(changes: Storage.StorageAreaOnChangedChangesType) => void>;
+  onChanged: Events.Event<
+    (changes: Storage.StorageAreaOnChangedChangesType) => void
+  >;
 }
 
 describe("ConfigManager", () => {
-    test("defaults match snapshot", async () => {
-        const storage = new MockStorage();
-        storage.get = mock(async () => { return {} });
-        storage.set = mock();
-
-        const configManager = new config.ConfigManager(storage);
-        const resp = await configManager.get();
-        expect(resp).toMatchSnapshot();
+  test("defaults match snapshot", async () => {
+    const storage = new MockStorage();
+    storage.get = mock(async () => {
+      return {};
     });
+    storage.set = mock();
 
-    test("empty value in storage returns default value", async () => {
-        const storage = new MockStorage();
-        storage.get = mock(async () => { return {} });
-        storage.set = mock();
+    const configManager = new config.ConfigManager(storage);
+    const resp = await configManager.get();
+    expect(resp).toMatchSnapshot();
+  });
 
-        const configManager = new config.ConfigManager(storage);
-        const resp = await configManager.getApiKey();
-        expect(resp).toStrictEqual("");
-        expect(storage.get).toBeCalledTimes(1);
-        expect(storage.set).toBeCalledTimes(1);
+  test("empty value in storage returns default value", async () => {
+    const storage = new MockStorage();
+    storage.get = mock(async () => {
+      return {};
     });
+    storage.set = mock();
+
+    const configManager = new config.ConfigManager(storage);
+    const resp = await configManager.getApiKey();
+    expect(resp).toStrictEqual("");
+    expect(storage.get).toBeCalledTimes(1);
+    expect(storage.set).toBeCalledTimes(1);
+  });
 });
