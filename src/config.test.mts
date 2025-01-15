@@ -18,7 +18,7 @@
 
 import { describe, expect, mock, test } from "bun:test";
 import type { Events, Storage } from "webextension-polyfill";
-import * as lib from "./lib.mjs";
+import * as config from "./config.mts";
 
 class MockStorage implements Storage.StorageArea {
     constructor() {
@@ -44,30 +44,26 @@ class MockStorage implements Storage.StorageArea {
     onChanged: Events.Event<(changes: Storage.StorageAreaOnChangedChangesType) => void>;
 }
 
-describe("getOrInitProtocols", () => {
-    test("empty list but not undefined returns no allowed protocols", async () => {
-        const storage = new MockStorage();
-        storage.get = mock(async () => { return { allowedProtocols: [] } });
-        expect(await lib.getOrInitProtocols(storage)).toEqual(new Set());
-        expect(storage.get).toBeCalledTimes(1);
-    });
-
-    test("undefined list initializes", async () => {
+describe("ConfigManager", () => {
+    test("defaults match snapshot", async () => {
         const storage = new MockStorage();
         storage.get = mock(async () => { return {} });
-        storage.set = mock(async () => { });
-        expect((await lib.getOrInitProtocols(storage))).toEqual(lib.DEFAULT_PROTOCOLS);
+        storage.set = mock();
+
+        const configManager = new config.ConfigManager(storage);
+        const resp = await configManager.get();
+        expect(resp).toMatchSnapshot();
+    });
+
+    test("empty value in storage returns default value", async () => {
+        const storage = new MockStorage();
+        storage.get = mock(async () => { return {} });
+        storage.set = mock();
+
+        const configManager = new config.ConfigManager(storage);
+        const resp = await configManager.getApiKey();
+        expect(resp).toStrictEqual("");
         expect(storage.get).toBeCalledTimes(1);
         expect(storage.set).toBeCalledTimes(1);
     });
-
-    test("defined list does not reinitialize", async () => {
-        const storage = new MockStorage();
-        const expected = ["https:"];
-        storage.get = mock(async () => { return { allowedProtocols: expected } });
-        storage.set = mock(async () => { });
-        expect((await lib.getOrInitProtocols(storage))).toEqual(new Set(expected));
-        expect(storage.get).toBeCalledTimes(1);
-        expect(storage.set).toBeCalledTimes(0);
-    });
-})
+});

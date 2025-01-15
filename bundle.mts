@@ -23,7 +23,7 @@ async function compile() {
   await Bun.build({
     entrypoints: [
       "./src/background.mts",
-      "./src/options.js",
+      "./src/options.mts",
     ],
     outdir: DISTRIBUTION_DIR,
     sourcemap: "linked",

@@ -17,12 +17,11 @@
  */
 
 import type { Storage } from "webextension-polyfill";
-import type { ShlinkConfig } from "./config.mts";
+import { ConfigManager } from "./config.mts";
 import type { ShlinkRequest } from "./shlink_request.mts";
 import type { ShlinkCreateShortUrlData, ShlinkEditShortUrlData, ShlinkShortUrl } from "@shlinkio/shlink-js-sdk/api-contract";
 import { ShlinkRestClient } from "./shlink_api.mts";
 
-const DEFAULT_PROTOCOLS = new Set(["http:", "https:", "ftp:", "file:"]);
 
 class ValidatedUrl {
   url: URL;
@@ -49,7 +48,7 @@ class ValidatedUrl {
  * else an error describing why it was unsupported.
  */
 async function validateURL(storage: Storage.StorageArea, url: URL, title: string, tabId: number | undefined): Promise<ValidatedUrl> {
-  const allowedProtocols = await getOrInitProtocols(storage);
+  const allowedProtocols = await new ConfigManager(storage).getAllowedProtocols();
 
   if (allowedProtocols.size > 0 && !allowedProtocols.has(url.protocol)) {
     throw new Error(`The current page's protocol (${url.protocol}) is unsupported.`);
@@ -57,21 +56,6 @@ async function validateURL(storage: Storage.StorageArea, url: URL, title: string
 
   return new ValidatedUrl(url, title, tabId);
 }
-
-async function getOrInitProtocols(storage: Storage.StorageArea): Promise<Set<string>> {
-  const allowedProtocols = (await storage.get("allowedProtocols") as Record<string, Array<string> | undefined>)['allowedProtocols'];
-  if (allowedProtocols === undefined) {
-    await storage.set({ allowedProtocols: Array(...DEFAULT_PROTOCOLS) });
-    return DEFAULT_PROTOCOLS;
-  } else {
-    return new Set(allowedProtocols);
-  }
-}
-
-function getConfig(storage: Storage.StorageArea): Promise<ShlinkConfig> {
-  return storage.get() as Promise<unknown> as Promise<ShlinkConfig>;
-}
-
 
 /**
  * Fetches locally saved data and parse the URL object to generate an object
@@ -85,13 +69,15 @@ function getConfig(storage: Storage.StorageArea): Promise<ShlinkConfig> {
  */
 async function generateShlinkRequest(storage: Storage.StorageArea, { url, title, tabId }: ValidatedUrl): Promise<ShlinkRequest> {
   console.debug("Generating Shlink Request");
-  let config = await getConfig(storage);
-  if (!config.shlinkApiKey) {
-    throw new Error(
-      "Missing API key. Please configure the Shlink extension!"
-    );
+  let config = await new ConfigManager(storage).get();
+
+  let [apiKey, host] = [config.shlinkApiKey, config.shlinkHost];
+
+  if (!apiKey) {
+    throw new Error("Missing API key. Please configure the Shlink extension!");
   }
-  if (!config.shlinkApiKey || !config.shlinkHost) {
+
+  if (!apiKey || !host) {
     throw new Error("Please configure Shlink!");
   }
   const request: ShlinkRequest = {
@@ -142,4 +128,4 @@ function requestShlink(shlinkRequest: ShlinkRequest): Promise<ShlinkShortUrl> {
   }
 }
 
-export { DEFAULT_PROTOCOLS, ValidatedUrl, validateURL, getOrInitProtocols, generateShlinkRequest, requestShlink };
+export { ValidatedUrl, validateURL, generateShlinkRequest, requestShlink };
