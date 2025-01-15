@@ -16,7 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ConfigManager, type ShlinkConfig } from "../lib/config.mts";
+import {
+  ConfigManager,
+  FILE_PROTOCOL,
+  FTP_PROTOCOL,
+  HTTP_PROTOCOL,
+  HTTPS_PROTOCOL,
+  type ShlinkConfig,
+} from "../lib/config.mts";
 
 var browser = require("webextension-polyfill");
 
@@ -49,6 +56,26 @@ const modifyOptionsShortUrlEle = document.getElementById(
 // Global shorthands
 const browserStorage = browser.storage.local;
 
+const HIDDEN_CLASS = "hidden";
+
+function hide(ele: HTMLElement): void {
+  ele.classList.add(HIDDEN_CLASS);
+}
+
+function show(ele: HTMLElement): void {
+  ele.classList.remove(HIDDEN_CLASS);
+}
+
+const INVALID_VALUE_CLASS = "invalid-value";
+
+function renderInvalid(ele: HTMLElement): void {
+  ele.classList.add(INVALID_VALUE_CLASS);
+}
+
+function renderValid(ele: HTMLElement): void {
+  ele.classList.remove(INVALID_VALUE_CLASS);
+}
+
 // Event listeners
 hostKeyEle.oninput = (event) => {
   if (event.type === "click") {
@@ -62,14 +89,14 @@ hostKeyEle.oninput = (event) => {
     const url = new URL(shlinkHost);
 
     // We already throw an exception earlier, might as well throw an error here.
-    if (url.protocol !== "https:") {
+    if (url.protocol !== HTTPS_PROTOCOL) {
       throw new Error("Only HTTPS communications are allowed.");
     }
 
     browserStorage.set({ shlinkHost });
-    hostKeyEle.classList.remove("invalid-value");
+    renderValid(hostKeyEle);
   } catch (_) {
-    hostKeyEle.classList.add("invalid-value");
+    renderInvalid(hostKeyEle);
   }
 };
 
@@ -85,9 +112,9 @@ apiKeyEle.oninput = (event) => {
 
   if (apiKeyRegex.test(shlinkApiKey)) {
     browserStorage.set({ shlinkApiKey });
-    apiKeyEle.classList.remove("invalid-value");
+    renderValid(apiKeyEle);
   } else {
-    apiKeyEle.classList.add("invalid-value");
+    renderInvalid(apiKeyEle);
   }
 };
 
@@ -108,10 +135,10 @@ createOptionsTagShortUrlEle.onclick = async () => {
 };
 
 const allowProtocolsMapping: Array<[HTMLInputElement, string]> = [
-  [AllowHttpEle, "http:"],
-  [AllowHttpsEle, "https:"],
-  [AllowFileEle, "file:"],
-  [AllowFtpEle, "ftp:"],
+  [AllowHttpEle, HTTP_PROTOCOL],
+  [AllowHttpsEle, HTTPS_PROTOCOL],
+  [AllowFileEle, FILE_PROTOCOL],
+  [AllowFtpEle, FTP_PROTOCOL],
 ];
 
 for (const [ele, protocol] of allowProtocolsMapping) {
@@ -132,13 +159,13 @@ for (const [ele, protocol] of allowProtocolsMapping) {
 clickBehaviorEle.onchange = () => {
   switch (clickBehaviorEle.value) {
     case "create":
-      modifyOptionsEle.classList.add("hidden");
-      createOptionsEle.classList.remove("hidden");
+      hide(modifyOptionsEle);
+      show(createOptionsEle);
       browserStorage.set({ shlinkButtonOption: clickBehaviorEle.value });
       break;
     case "modify":
-      modifyOptionsEle.classList.remove("hidden");
-      createOptionsEle.classList.add("hidden");
+      show(modifyOptionsEle);
+      hide(createOptionsEle);
       browserStorage.set({ shlinkButtonOption: clickBehaviorEle.value });
       break;
     default:
@@ -152,10 +179,10 @@ modifyOptionsShortUrlEle.oninput = async (event) => {
   }
 
   if (modifyOptionsShortUrlEle.value.length < 4) {
-    modifyOptionsShortUrlEle.classList.add("invalid-value");
+    renderInvalid(modifyOptionsShortUrlEle);
     return;
   } else {
-    modifyOptionsShortUrlEle.classList.remove("invalid-value");
+    renderValid(modifyOptionsShortUrlEle);
   }
 
   const configManager = new ConfigManager(browserStorage);
@@ -173,30 +200,28 @@ function setCurrentChoice({
   createOptions,
   modifyOptions,
 }: ShlinkConfig) {
-  hostKeyEle.value = shlinkHost || "";
-  apiKeyEle.value = shlinkApiKey || "";
+  hostKeyEle.value = shlinkHost;
+  apiKeyEle.value = shlinkApiKey;
 
-  // Initialize a list of protocols that are allowed if unset. This needs
-  // to be synced with the initialization code in background.js#validateURL.
-  allowedProtocols = new Set(allowedProtocols);
-  AllowHttpEle.checked = allowedProtocols.has("http:");
-  AllowHttpsEle.checked = allowedProtocols.has("https:");
-  AllowFileEle.checked = allowedProtocols.has("file:");
-  AllowFtpEle.checked = allowedProtocols.has("ftp:");
+  AllowHttpEle.checked = allowedProtocols.has(HTTP_PROTOCOL);
+  AllowHttpsEle.checked = allowedProtocols.has(HTTPS_PROTOCOL);
+  AllowFileEle.checked = allowedProtocols.has(FILE_PROTOCOL);
+  AllowFtpEle.checked = allowedProtocols.has(FTP_PROTOCOL);
 
-  createOptionsFindIfExistsEle.checked = !!createOptions.findIfExists;
-  createOptionsTagShortUrlEle.checked = !!createOptions.tagShortUrl;
+  createOptionsFindIfExistsEle.checked = createOptions.findIfExists;
+  createOptionsTagShortUrlEle.checked = createOptions.tagShortUrl;
+
   if (modifyOptions) {
     modifyOptionsShortUrlEle.value = modifyOptions.shortUrl;
   }
 
   switch (shlinkButtonOption) {
     case "create":
-      createOptionsEle.classList.remove("hidden");
+      show(createOptionsEle);
       clickBehaviorEle.value = shlinkButtonOption;
       break;
     case "modify":
-      modifyOptionsEle.classList.remove("hidden");
+      show(modifyOptionsEle);
       clickBehaviorEle.value = shlinkButtonOption;
       break;
     default:

@@ -42,6 +42,11 @@ interface ModifyOptions {
   shortUrl?: string;
 }
 
+const HTTP_PROTOCOL = "http:";
+const HTTPS_PROTOCOL = "https:";
+const FTP_PROTOCOL = "ftp:";
+const FILE_PROTOCOL = "file:";
+
 const DEFAULT: DeepRequired<StorageAreaShlinkConfig> = {
   shlinkApiKey: "",
   shlinkHost: "",
@@ -53,7 +58,12 @@ const DEFAULT: DeepRequired<StorageAreaShlinkConfig> = {
   modifyOptions: {
     shortUrl: "",
   },
-  allowedProtocols: ["http:", "https:", "ftp:", "file:"],
+  allowedProtocols: [
+    HTTP_PROTOCOL,
+    HTTPS_PROTOCOL,
+    FTP_PROTOCOL,
+    FILE_PROTOCOL,
+  ],
 };
 
 // The public version of Shlink Config. In practice, everything should be defined
@@ -209,4 +219,10 @@ class ConfigManager {
 }
 
 export type { CreateOptions, ModifyOptions, ShlinkConfig };
-export { ConfigManager };
+export {
+  ConfigManager,
+  HTTP_PROTOCOL,
+  HTTPS_PROTOCOL,
+  FTP_PROTOCOL,
+  FILE_PROTOCOL,
+};
