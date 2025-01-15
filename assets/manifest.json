@@ -12,7 +12,7 @@
     "256": "icons/shlink-256.png"
   },
   "permissions": [
-    "tabs",
+    "activeTab",
     "offscreen",
     "notifications",
     "clipboardWrite",

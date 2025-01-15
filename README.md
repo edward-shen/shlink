@@ -50,7 +50,7 @@ This extension keeps your API key in plaintext in your local browser storage.
 
 | Permission                        | Reason                                                                                            |
 | --------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [`tabs`][tabs-api]                | Needed so that the extension read the current active tab.                                         |
+| [`activeTab`][tabs-api]           | Needed so that the extension read the current active tab.                                         |
 | [`notifications`][notif-api]      | Needed so that the extension can inform users if generating the short link was successful or not. |
 | [`clipboardWrite`][clipboard-api] | Needed so that the extension can copy the short link to your clipboard.                           |
 | [`offscreen`][offscreen-api]      | _Chrome only_. Needed to [workaround clipboard writing] to an offscreen doc.                      |
