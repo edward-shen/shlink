@@ -36,7 +36,6 @@ async function copyLinkToClipboard(
   if (isChrome(navigator.clipboard)) {
     console.info("Using Chrome fallback");
     await writeToOffscreenClipboard(shlinkResp.shortUrl);
-    await showBadge();
   } else {
     console.debug("Using navigator.clipboard");
     try {
@@ -47,19 +46,6 @@ async function copyLinkToClipboard(
   }
 
   return shlinkResp;
-}
-
-async function showBadge() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-
-  if (tabs.length > 0 && tabs[0].id !== undefined) {
-    const tabId = tabs[0].id;
-
-    const action = chrome.browserAction || chrome.action;
-
-    action.setBadgeText({ text: "ok", tabId });
-    action.setBadgeBackgroundColor({ color: "#029e02", tabId });
-  }
 }
 
 function isChrome(clipboard: Clipboard | undefined): boolean {

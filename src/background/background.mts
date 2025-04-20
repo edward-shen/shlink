@@ -21,6 +21,19 @@ import * as browser from "webextension-polyfill";
 import { notifySuccess, notifyError } from "../background/notify.mts";
 import { copyLinkToClipboard } from "../background/clipboard.mts";
 
+async function showBadge() {
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+
+  if (tabs.length > 0 && tabs[0].id !== undefined) {
+    const tabId = tabs[0].id;
+
+    const action = browser.browserAction || browser.action;
+
+    action.setBadgeBackgroundColor({ color: "#029e02", tabId });
+    action.setBadgeText({ text: "ok", tabId });
+  }
+}
+
 /**
  * Main function for generating a shortened link.
  */
@@ -62,10 +75,12 @@ async function generateShlink() {
     const shlinkResponse = await requestShlink(generatedShlinkRequest);
     await copyLinkToClipboard(shlinkResponse);
     await notifySuccess(notifications, shlinkResponse);
+    await showBadge();
   } catch (error) {
     console.error(error);
     notifyError(notifications, error as Error);
   }
 }
+
 
 browser.action.onClicked.addListener(generateShlink);
