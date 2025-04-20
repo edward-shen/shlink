@@ -82,5 +82,4 @@ async function generateShlink() {
   }
 }
 
-
 browser.action.onClicked.addListener(generateShlink);
