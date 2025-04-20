@@ -44,7 +44,23 @@ async function copyLinkToClipboard(
       throw new Error(`Failed to copy to clipboard. ${e.message}`);
     }
   }
+
+  showBadge();
   return shlinkResp;
+}
+
+function showBadge(): void {
+  const browser = typeof browser !== "undefined" ? browser : chrome;
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+
+  if (tabs.length > 0 && tabs[0].id !== undefined) {
+    const tabId = tabs[0].id;
+
+    const action = browser.browserAction || browser.action;
+
+    action.setBadgeText({ "ok", tabId });
+    action.setBadgeBackgroundColor({ color: "#029e02", tabId });
+  }
 }
 
 function isChrome(clipboard: Clipboard | undefined): boolean {
