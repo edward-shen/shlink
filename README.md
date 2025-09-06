@@ -77,6 +77,8 @@ Then, run `bun install`.
 
 ### Running
 
+You can build it by running `bun run build`.
+
 ```sh
 bun run watch
 ```
